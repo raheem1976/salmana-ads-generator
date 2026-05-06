@@ -1437,12 +1437,23 @@ function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pas
   let hookInstruction = '';
   if (isMix) {
     hookInstruction = `Verteile die ${hookCount} Hooks wie folgt:
-- ${cold} Cold-Hooks (❄️): Kein PMU-Begriff. Nur Emotion, Sehnsucht, Alltagsschmerz. Zielfrau erfährt erst im Body, worum es geht.
+- ${cold} Cold-Hooks (❄️): Kein PMU-Begriff. 15–25 Wörter. Male eine konkrete Alltagsszene (Wecker, Büro, Instagram-Scrollen, Kita-Abgabe) – die Frau erkennt sich sofort wieder. Zielfrau erfährt erst im Body, worum es geht.
 - ${warm} Warm-Hooks (🌤): "Beauty-Studio" oder "Permanent Make-up" darf vorkommen. Zielgruppe kennt Salmana bereits.
 - ${retarg} Retargeting-Hooks (🔥): PMU direkt, Einwände adressieren (Kosten, Talent, Kunden), sehr spezifisch.
 Markiere jeden Hook mit dem passenden Emoji am Ende des TYP-Feldes.`;
   } else if (traffic.startsWith('Cold')) {
-    hookInstruction = `Alle ${hookCount} Hooks sind Cold-Hooks (❄️): KEIN PMU-Begriff. Nur Emotion, Sehnsucht, Alltagsschmerz. Die Zielfrau erfährt erst im Body-Text, dass es um PMU geht. Markiere TYP mit ❄️.`;
+    hookInstruction = `Alle ${hookCount} Hooks sind Cold-Hooks (❄️): KEIN PMU-Begriff.
+
+LÄNGE & STIL: 15–25 Wörter pro Hook. Kein 6-Wörter-Satz der zu abstrakt ist. Male eine konkrete Alltagsszene – die Frau liest es und denkt "woher weiß die das über mich?".
+
+SZENEN-HOOKS – so klingt ein guter Cold-Hook:
+✅ "Jeden Morgen derselbe Ablauf. Kind fertigmachen. In einen Job fahren, der sich schon lange nicht mehr wie deiner anfühlt."
+✅ "Du scrollst durch Instagram, siehst Frauen mit eigenem Studio – und fragst dich kurz, ob das für dich auch möglich wäre."
+✅ "Es gibt diesen Moment im Büro, wo du innerlich schon längst woanders bist. Und weißt, dass das kein gutes Zeichen ist."
+❌ NICHT: "Du weißt, dass du mehr kannst." (zu kurz, zu abstrakt)
+❌ NICHT: "Bist du bereit für Veränderung?" (klingt nach Werbung)
+
+Markiere TYP mit ❄️.`;
   } else if (traffic.startsWith('Warm')) {
     hookInstruction = `Alle ${hookCount} Hooks sind Warm-Hooks (🌤): "Beauty-Studio" oder "Permanent Make-up" darf vorkommen. Publikum kennt Salmana bereits. Markiere TYP mit 🌤.`;
   } else {
@@ -1480,7 +1491,7 @@ ${hookInstruction}`;
 HOOK_START
 NUMMER: [Zahl]
 TYP: [Hook-Typ + Temperatur-Emoji]
-TEXT: [Der Hook-Text – max. 2 Zeilen]
+TEXT: [Der Hook-Text – 15–25 Wörter bei Cold ❄️, konkrete Szene; max. 2 Zeilen bei Warm/Retargeting]
 HOOK_END
 
 ### 2. BODY-TEXTE (${bodyCount} Stück)
