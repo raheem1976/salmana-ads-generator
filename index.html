@@ -778,7 +778,7 @@
           <div class="chip" data-val="5">5</div>
         </div>
         <div style="background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-family:sans-serif; font-size:12px; color:var(--mid); line-height:1.6;">
-          Body = Haupttext der Ad (4–8 Zeilen). Kein Hook, kein CTA – nur der Kern, der überzeugt.
+          Body = Haupttext der Ad (4–8 Zeilen). Greift die Emotion des entsprechenden Hooks direkt auf und führt sie weiter. Ich-Perspektive (Salmana spricht als &quot;Ich&quot;).
         </div>
       </div>
       <div>
@@ -832,7 +832,7 @@
         <h3 style="font-size:20px;">📝 Body-Texte</h3>
         <button class="copy-all-btn" onclick="copySection('bodyCards')">Alle Bodies kopieren</button>
       </div>
-      <p style="font-family:sans-serif; font-size:13px; color:var(--mid); margin-bottom:20px;">Der Haupttext der Ad – frei mit jedem Hook kombinierbar.</p>
+      <p style="font-family:sans-serif; font-size:13px; color:var(--mid); margin-bottom:20px;">Der Haupttext der Ad – jeder Body passt direkt zu seinem Hook (Body 1 → Hook 1 usw.).</p>
       <div id="bodyCards"></div>
     </div>
 
@@ -1484,12 +1484,17 @@ TEXT: [Der Hook-Text – max. 2 Zeilen]
 HOOK_END
 
 ### 2. BODY-TEXTE (${bodyCount} Stück)
-Jeder Body ist ein eigenständiger Haupttext (4–8 Zeilen). Kein Hook, kein CTA darin. Emojis OK.
+WICHTIG: Jeder Body-Text greift DIREKT den emotionalen Winkel des entsprechenden Hooks auf.
+Body 1 → führt Hook 1 fort. Body 2 → führt Hook 2 fort. Usw.
+
+Der Body beginnt mit der Emotion/Situation aus dem Hook – nahtlos, wie ein Gespräch das weitergeht.
+Kein CTA im Body. Emojis OK. Schreib wie du redest – kurze Sätze, Gesprächston, keine Floskeln.
+Schreib AUS DER SICHT VON SALMANA (Ich-Perspektive) wenn persönliche Erfahrung erwähnt wird.
 
 BODY_START
 NUMMER: [Zahl]
-THEMA: [z.B. "Job-Frust", "Mama & Unabhängigkeit", "Crashkurs-Enttäuschung", "Traumvision Studio"]
-TEXT: [Der Body-Text]
+PASST ZU HOOK: [Hook-Nummer]
+TEXT: [Der Body-Text – greift Hook-Emotion direkt auf, Ich-Perspektive wenn Salmana spricht]
 BODY_END
 
 ### 3. CALL TO ACTIONS (${ctaCount} Stück)
@@ -1906,6 +1911,13 @@ ${trafficInstruction}
 - CTA am Ende, allein, eigene Zeile
 - Länge: 150–400 Wörter
 ${hashtags ? '- Am Ende: 10–15 Hashtags (Deutsch + Englisch, auf neuer Zeile nach dem CTA)' : '- KEINE Hashtags'}
+
+## STIL-REGELN (genauso wichtig wie das Format)
+- Schreib WIE DU REDEST: kurze Sätze, Gesprächston, keine Schachtelsätze, kein Flyer-Deutsch
+- ICH-PERSPEKTIVE: Salmana spricht immer in der ersten Person. Nie "Salmana hat", "bei Salmana", "Salmana zeigt" – stattdessen: "Ich habe", "bei mir", "ich zeige dir"
+- Der Body-Text greift die Emotion des Hooks DIREKT auf – nahtlos, wie ein Gespräch das weitergeht
+- Konkret und präzise: Zahlen, Szenen, echte Momente statt abstrakte Versprechen
+- Kein Satz der keinen Zweck hat – jeder Satz muss etwas auslösen
 
 ## OUTPUT-FORMAT – EXAKT einhalten, kein Text außerhalb der Blöcke:
 
