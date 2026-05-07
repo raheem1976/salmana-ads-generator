@@ -661,6 +661,10 @@
       <input type="password" id="openaiKeyInput" placeholder="sk-..." />
       <label style="margin-top:16px;"><strong>Modell</strong></label>
       <div class="model-cards" id="openaiModelCards">
+        <div class="model-card" data-model="gpt-5" onclick="selectOpenaiModel(this)">
+          <div class="model-card-header"><span class="model-name">GPT-5</span><span class="model-badge" style="background:#7c3aed;color:#fff;">&#x1F52E; Neuestes</span></div>
+          <div class="model-desc">Aktuellstes Flaggschiff-Modell von OpenAI. Stärkste Reasoning-Fähigkeiten und bestes Copywriting.</div>
+        </div>
         <div class="model-card active" data-model="gpt-4o" onclick="selectOpenaiModel(this)">
           <div class="model-card-header"><span class="model-name">GPT-4o</span><span class="model-badge recommended">&#x2B50; Empfohlen</span></div>
           <div class="model-desc">Flagship-Modell von OpenAI. Sehr starkes Copywriting, versteht Kontext und Emotionen.</div>
