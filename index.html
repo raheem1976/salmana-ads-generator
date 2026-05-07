@@ -1885,14 +1885,17 @@ ERLAUBT UND ERWÜNSCHT (so redet man wirklich):
 ✅ Satzabbrüche, kurze Fragen, direkte Ansprache als du/ich, keine 3. Person
 ✅ "ich hab" statt "ich habe", "du bist" nicht "man ist"
 
-${bodyStyles && bodyStyles.length > 0 ? `BODY-STIL (Ton & Schreibweise): ${bodyStyles.join(', ')}
-- Storytelling: Erzähle eine echte Geschichte, persönlich, wie ein Brief an eine Freundin.
-- Dialogisch: Stelle direkte Fragen die die Leserin innerlich mit "JA!" beantwortet. "Kennst du das Gefühl wenn...?"
-- Listicle: Nutze klare Aufzählungen für Vorteile – aber baue vorher Emotion auf, nicht sofort die Liste.
-- Fakten & Ergebnisse: Konkrete Zahlen, Absolventinnen-Ergebnisse, Vorher-Nachher. Kein Blabla.
-- Empowerment: Motivierend, aufbauend, ohne Druck. Zeige dass sie es KANN.
-- Sozial Beweis: Webe Absolventinnen-Geschichten ein. "Letzte Woche hat mir Sarah geschrieben – sie hat jetzt ihren ersten eigenen Kurs..."
-Setze den/die gewählten Stil(e) konsequent um – von Anfang bis Ende.` : ''}
+${bodyStyles && bodyStyles.length > 0 ? (() => {
+  const stilMap = {
+    'Storytelling': 'BODY-STIL: Storytelling – Erzähle eine echte Geschichte, persönlich, wie du es einer Freundin erzählen würdest. Konkrete Details, echter Moment, echter Wendepunkt.',
+    'Dialogisch': 'BODY-STIL: Dialogisch – Stelle direkte Fragen die sie innerlich mit "JA!" beantwortet. "Kennst du das?" "Hast du das auch schon gedacht?" Rede mit ihr, nicht über sie.',
+    'Listicle': 'BODY-STIL: Listicle – Baue erst Emotion auf (Problem + Sehnsucht), dann folgen klare kurze Punkte. Nicht sofort eine Liste – erst das Gefühl, dann die Fakten.',
+    'Fakten & Ergebnisse': 'BODY-STIL: Fakten & Ergebnisse – Konkrete Zahlen, Absolventinnen-Ergebnisse, Vorher-Nachher. Nichts Vages. Nur was man beweisen kann.',
+    'Empowerment': 'BODY-STIL: Empowerment – Motivierend, aufbauend, ohne Druck. Zeige dass sie es KANN – weil andere es auch geschafft haben. Warm, nicht pushy.',
+    'Sozial Beweis': 'BODY-STIL: Sozial Beweis – Webe echte Absolventinnen-Momente ein: "Letzte Woche hat mir eine Absolventin geschrieben – sie hat jetzt ihr eigenes Studio. Nach 6 Wochen." Echte Geschichten, kein Abstract.'
+  };
+  return bodyStyles.map(s => stilMap[s] || `BODY-STIL: ${s}`).join('\n');
+})() : ''}
 
 BODY-STRUKTUR: ${bodyStructure && bodyStructure !== 'Frei' ? bodyStructure : 'Frei'}
 ${bodyStructure === 'AIDA' ? `
