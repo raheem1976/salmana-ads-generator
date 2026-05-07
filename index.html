@@ -1143,7 +1143,7 @@ Cold-Hooks müssen die Leserin in einen **konkreten, filmischen Alltagsmoment** 
 
 **Der Filmtest:** Könnte man den Hook filmen? Ja → gut. Nur ein abstrakter Gedanke → umschreiben.
 
-**Länge Cold-Hooks:** 15–25 Wörter. Kurze Sätze wie ein Filmschnitt.
+**Länge Cold-Hooks:** 60–90 Wörter. 5–7 kurze Sätze wie ein Filmschnitt. Umgangssprache – schreib wie gesprochen.
 
 GUTE Szenen-Hooks:
 ✅ "Montag, 7 Uhr. Die Kita-Tür geht zu. Du drehst dich um. Und fährst wieder in ein Leben, das sich nicht wie deins anfühlt."
@@ -1217,7 +1217,7 @@ Jeder Body-Text greift den emotionalen Winkel seines Hooks DIREKT auf. Body 1 �
 
 ## SZENEN-HOOK-TECHNIK – Cold-Hooks (PFLICHT)
 
-Filmtest: Könnte man den Hook filmen? Ja → gut. Nur ein Gedanke → umschreiben. Länge: 15–25 Wörter.
+Filmtest: Könnte man den Hook filmen? Ja → gut. Nur ein Gedanke → umschreiben. Länge: 60–90 Wörter. 5–7 Sätze. Umgangssprache, wie gesprochen.
 
 ✅ "Montag, 7 Uhr. Die Kita-Tür geht zu. Du drehst dich um. Und fährst wieder in ein Leben, das sich nicht wie deins anfühlt."
 ✅ "Du sitzt im Meeting. Dein Chef redet. Du nickst. Innerlich bist du schon lange woanders."
@@ -1691,6 +1691,10 @@ async function generate() {
     showStatus('⚠ Bitte gib entweder eine Landingpage-URL ein oder beschreibe manuell, was beworben werden soll.', 'error');
     return;
   }
+  if (landingUrl && !fetchedPageContent && !desc) {
+    showStatus('⚠ Die Landingpage konnte nicht automatisch gelesen werden. Bitte fülle "Was wird beworben?" manuell aus – sonst bewirbt die KI möglicherweise das falsche Angebot.', 'error');
+    return;
+  }
 
   const hookCount = parseInt(document.getElementById('hookCount').value) || 60;
   const hookTypes = getActiveChips('hookTypeChips');
@@ -1781,7 +1785,7 @@ function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pas
   let hookInstruction = '';
   if (isMix) {
     hookInstruction = `Verteile die ${hookCount} Hooks wie folgt:
-- ${cold} Cold-Hooks (❄️): Kein PMU-Begriff. 15–25 Wörter. SZENE statt Aussage: Filmischer Alltagsmoment (Kita-Tür, Meeting, Sonntagabend, Gehaltsabrechnung). Test: Könnte man es filmen? – Zielfrau erfährt erst im Body, worum es geht.
+- ${cold} Cold-Hooks (❄️): Kein PMU-Begriff. 60–90 Wörter, 5–7 Sätze. SZENE statt Aussage: Filmischer Alltagsmoment (Kita-Tür, Meeting, Sonntagabend, Gehaltsabrechnung). Test: Könnte man es filmen? – Zielfrau erfährt erst im Body, worum es geht.
 - ${warm} Warm-Hooks (🌤): "Beauty-Studio" oder "Permanent Make-up" darf vorkommen. Zielgruppe kennt Salmana bereits.
 - ${retarg} Retargeting-Hooks (🔥): PMU direkt, Einwände adressieren (Kosten, Talent, Kunden), sehr spezifisch.
 Markiere jeden Hook mit dem passenden Emoji am Ende des TYP-Feldes.`;
@@ -1793,7 +1797,7 @@ Ein Hook muss die Leserin in einen konkreten Moment versetzen – sie soll ihn v
 NICHT: eine Aussage über sie machen. SONDERN: sie in eine filmische Szene setzen.
 Test: Könnte man die Szene filmen? Ja → gut. Nur ein Gedanke → umschreiben.
 
-LÄNGE: 15–25 Wörter. Kurze Sätze wie ein Filmschnitt.
+LÄNGE: 60–90 Wörter. 5–7 Sätze. Umgangssprache – schreib wie gesprochen, kein Marketing-Deutsch.
 
 GUTE SZENEN-HOOKS:
 ✅ 'Montag, 7 Uhr. Die Kita-Tür geht zu. Du drehst dich um. Und fährst wieder in ein Leben, das sich nicht wie deins anfühlt.'
@@ -1846,7 +1850,7 @@ ${hookInstruction}`;
 HOOK_START
 NUMMER: [Zahl]
 TYP: [Hook-Typ + Temperatur-Emoji]
-TEXT: [Der Hook-Text – max. 2 Zeilen]
+TEXT: [Der Hook-Text – 60–90 Wörter bei Cold ❄️ (5–7 Sätze, Umgangssprache, gesprochen); 40–60 Wörter bei Warm/Retargeting]
 HOOK_END
 
 ### 2. BODY-TEXTE (${bodyCount} Stück)
@@ -1854,8 +1858,9 @@ WICHTIG: Jeder Body-Text greift DIREKT den emotionalen Winkel des entsprechenden
 Body 1 → führt Hook 1 fort. Body 2 → führt Hook 2 fort. Usw.
 
 Der Body beginnt mit der Emotion/Situation aus dem Hook – nahtlos, wie ein Gespräch das weitergeht.
-Kein CTA im Body. Emojis OK. Schreib wie du redest – kurze Sätze, Gesprächston, keine Floskeln.
+Kein CTA im Body. Emojis OK. Schreib wie du redest – Umgangssprache, kurze Sätze, kein Marketing-Deutsch.
 Schreib AUS DER SICHT VON SALMANA (Ich-Perspektive) wenn persönliche Erfahrung erwähnt wird.
+WICHTIG FORMATIERUNG: Jeder Satz kommt in eine EIGENE ZEILE. Nach jedem Satz eine Leerzeile. Kein langer Fließtext.
 
 ${bodyStyles && bodyStyles.length > 0 ? `BODY-STIL: ${bodyStyles.join(', ')} – Setze diesen Stil konsequent um:
 - Storytelling: wie ein Brief, echte Geschichte
