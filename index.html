@@ -1325,50 +1325,115 @@ let fetchedPageUrl = '';
 let fetchTimer = null;
 
 // ─────────────────────────────────────────────
-//  API KEY
+//  MULTI-PROVIDER API KEY
 // ─────────────────────────────────────────────
+
+function getActiveProvider() {
+  return localStorage.getItem('salmana_provider') || 'claude';
+}
+
+function switchProviderTab(provider) {
+  localStorage.setItem('salmana_provider', provider);
+  const isClaude = provider === 'claude';
+  document.getElementById('claudeTab').style.display = isClaude ? 'block' : 'none';
+  document.getElementById('openaiTab').style.display = isClaude ? 'none' : 'block';
+  document.getElementById('tabClaude').style.background = isClaude ? 'var(--gold)' : 'var(--cream)';
+  document.getElementById('tabClaude').style.color = isClaude ? '#fff' : 'var(--dark)';
+  document.getElementById('tabOpenai').style.background = isClaude ? 'var(--cream)' : 'var(--gold)';
+  document.getElementById('tabOpenai').style.color = isClaude ? 'var(--dark)' : '#fff';
+}
+
+function selectClaudeModel(card) {
+  document.querySelectorAll('#claudeModelCards .model-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+}
+
+function selectOpenaiModel(card) {
+  document.querySelectorAll('#openaiModelCards .model-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+}
+
 function openApiModal() {
+  // Restore keys
   document.getElementById('apiKeyInput').value = localStorage.getItem('salmana_api_key') || '';
-  // Restore saved model selection
+  document.getElementById('openaiKeyInput').value = localStorage.getItem('salmana_openai_key') || '';
+
+  // Restore Claude model
   const savedModel = localStorage.getItem('salmana_model') || 'claude-sonnet-4-6';
-  document.querySelectorAll('.model-card').forEach(c => {
+  document.querySelectorAll('#claudeModelCards .model-card').forEach(c => {
     c.classList.toggle('active', c.dataset.model === savedModel);
   });
+
+  // Restore OpenAI model
+  const savedOaiModel = localStorage.getItem('salmana_openai_model') || 'gpt-4o';
+  document.querySelectorAll('#openaiModelCards .model-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.model === savedOaiModel);
+  });
+
+  // Restore active tab
+  switchProviderTab(getActiveProvider());
+
   document.getElementById('apiModal').classList.add('open');
 }
+
 function closeApiModal() {
   document.getElementById('apiModal').classList.remove('open');
 }
+
 function saveApiKey() {
-  const key = document.getElementById('apiKeyInput').value.trim();
-  if (!key) { alert('Bitte API-Key eingeben.'); return; }
-  localStorage.setItem('salmana_api_key', key);
-  // Save selected model
-  const activeCard = document.querySelector('.model-card.active');
-  if (activeCard) localStorage.setItem('salmana_model', activeCard.dataset.model);
+  const claudeKey = document.getElementById('apiKeyInput').value.trim();
+  const openaiKey = document.getElementById('openaiKeyInput').value.trim();
+  const provider = getActiveProvider();
+
+  if (provider === 'claude' && !claudeKey) { alert('Bitte Claude API-Key eingeben.'); return; }
+  if (provider === 'openai' && !openaiKey) { alert('Bitte OpenAI API-Key eingeben.'); return; }
+
+  if (claudeKey) {
+    localStorage.setItem('salmana_api_key', claudeKey);
+    const activeClaudeCard = document.querySelector('#claudeModelCards .model-card.active');
+    if (activeClaudeCard) localStorage.setItem('salmana_model', activeClaudeCard.dataset.model);
+  }
+  if (openaiKey) {
+    localStorage.setItem('salmana_openai_key', openaiKey);
+    const activeOaiCard = document.querySelector('#openaiModelCards .model-card.active');
+    if (activeOaiCard) localStorage.setItem('salmana_openai_model', activeOaiCard.dataset.model);
+  }
+
   updateHeaderModelLabel();
   closeApiModal();
   showStatus('Einstellungen gespeichert. ✓', 'info');
   setTimeout(() => hideStatus(), 3000);
 }
+
 function selectModel(card) {
+  // Legacy fallback — kept for compatibility
   document.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
   card.classList.add('active');
 }
+
 function getSelectedModel() {
+  const provider = getActiveProvider();
+  if (provider === 'openai') {
+    return localStorage.getItem('salmana_openai_model') || 'gpt-4o';
+  }
   return localStorage.getItem('salmana_model') || 'claude-sonnet-4-6';
 }
+
 function updateHeaderModelLabel() {
+  const provider = getActiveProvider();
   const model = getSelectedModel();
   const labels = {
-    'claude-sonnet-4-6': '· Sonnet 4.6',
-    'claude-opus-4-6': '· Opus 4.6',
-    'claude-haiku-4-5-20251001': '· Haiku 4.5'
+    'claude-sonnet-4-6': '🧠 Sonnet 4.6',
+    'claude-opus-4-6': '🧠 Opus 4.6',
+    'claude-haiku-4-5-20251001': '🧠 Haiku 4.5',
+    'gpt-4o': '🤖 GPT-4o',
+    'gpt-4o-mini': '🤖 GPT-4o mini',
+    'gpt-4-turbo': '🤖 GPT-4 Turbo'
   };
-  document.getElementById('headerModelLabel').textContent = labels[model] || '';
+  document.getElementById('headerModelLabel').textContent = '· ' + (labels[model] || model);
 }
 
-// ─────────────────────────────────────────────
+─
 //  CHIP LOGIC
 // ─────────────────────────────────────────────
 // Caption chip groups are handled separately – exclude them here
@@ -1414,7 +1479,7 @@ function updateTrafficHint() {
     'Cold': '❄️ <strong>Cold:</strong> Kein PMU-Begriff im Hook. Nur Emotion, Sehnsucht, Alltagsschmerz. Die Zielfrau erfährt erst im Body, was das Angebot ist.',
     'Warm': '🌤 <strong>Warm:</strong> PMU oder "Beauty-Studio" darf vorkommen. Die Person kennt Salmana bereits – du kannst konkreter werden.',
     'Retargeting': '🔥 <strong>Retargeting:</strong> PMU direkt ansprechen, Einwände aufgreifen (z.B. Kosten, Talent, Kunden). Diese Zielgruppe war schon interessiert.',
-    'Mix': '🎯 <strong>Mix:</strong> Claude schreibt automatisch 65% Cold, 25% Warm und 10% Retargeting – optimal zum Testen aller Funnel-Stufen.'
+    'Mix': '🎯 <strong>Mix:</strong> Die KI schreibt automatisch 65% Cold, 25% Warm und 10% Retargeting – optimal zum Testen aller Funnel-Stufen.'
   };
   const key = Object.keys(hints).find(k => val.startsWith(k));
   if (key) { hint.innerHTML = hints[key]; hint.style.display='block'; }
@@ -1530,10 +1595,68 @@ function hideStatus() {
 // ─────────────────────────────────────────────
 //  MAIN GENERATE
 // ─────────────────────────────────────────────
-async function generate() {
-  const apiKey = localStorage.getItem('salmana_api_key');
-  if (!apiKey) { openApiModal(); return; }
+async function callWithActiveProvider(systemPrompt, userPrompt) {
+  const provider = getActiveProvider();
+  if (provider === 'openai') {
+    const apiKey = localStorage.getItem('salmana_openai_key');
+    if (!apiKey) { openApiModal(); throw new Error('OpenAI API-Key fehlt.'); }
+    return await callOpenAI(apiKey, systemPrompt, userPrompt);
+  } else {
+    const apiKey = localStorage.getItem('salmana_api_key');
+    if (!apiKey) { openApiModal(); throw new Error('Claude API-Key fehlt.'); }
+    return await callAnthropicWithRetry(apiKey, {
+      model: getSelectedModel(),
+      max_tokens: 4096,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    });
+  }
+}
 
+async function callOpenAI(apiKey, systemPrompt, userPrompt, maxRetries = 3) {
+  const model = getSelectedModel();
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 4096,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ]
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.choices[0].message.content;
+    }
+
+    const err = await response.json().catch(() => ({}));
+    const isOverloaded = response.status === 429 || response.status === 503;
+
+    if (isOverloaded && attempt < maxRetries) {
+      const delay = attempt * 8000;
+      showStatus(`⏳ OpenAI API øberlastet – Retry ${attempt}/${maxRetries - 1} in ${delay/1000}s…`, 'warning');
+      await new Promise(r => setTimeout(r, delay));
+      continue;
+    }
+
+    throw new Error(err.error?.message || `OpenAI-Fehler ${response.status}`);
+  }
+}
+
+async function generate() {
+  const provider = getActiveProvider();
+  const hasKey = provider === 'openai'
+    ? !!localStorage.getItem('salmana_openai_key')
+    : !!localStorage.getItem('salmana_api_key');
+  if (!hasKey) { openApiModal(); return; }
   const desc = document.getElementById('workshopDesc').value.trim();
   const landingUrl = document.getElementById('landingUrl').value.trim();
   if (!desc && !fetchedPageContent && !landingUrl) {
@@ -1570,13 +1693,8 @@ async function generate() {
   // Build the user prompt
   let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure });
 
-  try {
-    const raw = await callAnthropicWithRetry(apiKey, {
-      model: getSelectedModel(),
-      max_tokens: 4096,
-      system: BRAND_SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: userPrompt }]
-    });
+    try {
+    const raw = await callWithActiveProvider(BRAND_SYSTEM_PROMPT, userPrompt);
     parseAndRender(raw);
 
   } catch(e) {
@@ -1889,7 +2007,9 @@ function copyAll() {
 // Auto-open API key modal if not set, otherwise show current model in header
 window.addEventListener('load', () => {
   updateHeaderModelLabel();
-  if (!localStorage.getItem('salmana_api_key')) {
+  const hasClaude = !!localStorage.getItem('salmana_api_key');
+  const hasOpenAI = !!localStorage.getItem('salmana_openai_key');
+  if (!hasClaude && !hasOpenAI) {
     setTimeout(openApiModal, 500);
   }
 });
@@ -2119,9 +2239,11 @@ Schreib wie du redest – nie wie ein Flyer.
 //  CAPTION GENERATE
 // ─────────────────────────────────────────────
 async function generateCaption() {
-  const apiKey = localStorage.getItem('salmana_api_key');
-  if (!apiKey) { openApiModal(); return; }
-
+  const provider = getActiveProvider();
+  const hasKey = provider === 'openai'
+    ? !!localStorage.getItem('salmana_openai_key')
+    : !!localStorage.getItem('salmana_api_key');
+  if (!hasKey) { openApiModal(); return; }
   const thema = document.getElementById('captionThema').value.trim();
   if (!thema) { showStatus('⚠ Bitte beschreibe das Thema der Caption.', 'error'); return; }
 
@@ -2143,13 +2265,8 @@ async function generateCaption() {
 
   const prompt = buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url });
 
-  try {
-    const raw = await callAnthropicWithRetry(apiKey, {
-      model: getSelectedModel(),
-      max_tokens: 4096,
-      system: CAPTION_SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: prompt }]
-    });
+    try {
+    const raw = await callWithActiveProvider(CAPTION_SYSTEM_PROMPT, prompt);
     parseCaptionsAndRender(raw);
 
   } catch(e) {
