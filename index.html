@@ -669,8 +669,8 @@
   <div class="section">
     <div class="section-title">01 · Was wird beworben?</div>
 
-    <label><strong>Workshop- / Webinar-Titel & kurze Beschreibung</strong><br>z.B. "Kostenloses Webinar: Dein Start ins PMU-Business – 15. Juni, 19 Uhr"</label>
-    <textarea id="workshopDesc" rows="3" placeholder="Titel, Datum/Uhrzeit, Preis (kostenlos oder bezahlt), besondere Inhalte..."></textarea>
+    <label><strong>Was wird beworben?</strong> <span style="font-family:sans-serif; font-size:12px; color:var(--mid);">(optional wenn Landingpage-URL angegeben)</span><br><span style="font-family:sans-serif; font-size:12px; color:var(--mid);">Wenn du eine URL eingibst, liest Claude die Seite automatisch und extrahiert Thema, Nutzen & Details selbst.</span></label>
+    <textarea id="workshopDesc" rows="3" placeholder="z.B. Kostenloses Webinar: Dein Start ins PMU-Business – 15. Juni, 19 Uhr&#10;Oder leer lassen wenn du unten eine Landingpage-URL eingibst ↓"></textarea>
 
     <label><strong>Landingpage-URL</strong> <span style="color:var(--mid); font-size:12px; font-family:sans-serif;">(wird automatisch gelesen)</span></label>
     <input type="url" id="landingUrl" placeholder="https://workshop.salmana-beauty-academy.de/..." oninput="scheduleFetch()" />
@@ -792,6 +792,33 @@
         <div style="background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-family:sans-serif; font-size:12px; color:var(--mid); line-height:1.6;">
           CTA = letzte Zeile. Dein Job: Hook + Body + CTA frei kombinieren und testen.
         </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <label><strong>Body-Stil</strong> <span style="font-size:12px; color:var(--mid);">(mehrere wählbar)</span></label>
+      <div style="font-family:sans-serif; font-size:12px; color:var(--mid); margin-bottom:10px;">Wie klingt der Text – Ton und Schreibweise</div>
+      <div class="chip-group" id="bodyStyleChips">
+        <div class="chip active" data-val="Storytelling">📖 Storytelling</div>
+        <div class="chip" data-val="Dialogisch">💬 Dialogisch</div>
+        <div class="chip" data-val="Listicle">📋 Listicle</div>
+        <div class="chip" data-val="Fakten & Ergebnisse">📊 Fakten & Ergebnisse</div>
+        <div class="chip" data-val="Empowerment">💪 Empowerment</div>
+        <div class="chip" data-val="Sozial Beweis">⭐ Sozial Beweis</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <label><strong>Body-Struktur</strong> <span style="font-size:12px; color:var(--mid);">(eine wählen)</span></label>
+      <div style="font-family:sans-serif; font-size:12px; color:var(--mid); margin-bottom:10px;">Wie ist der Text aufgebaut – das Argumentations-Framework</div>
+      <div class="chip-group" id="bodyStructureChips">
+        <div class="chip active" data-val="AIDA">AIDA</div>
+        <div class="chip" data-val="PAS">PAS</div>
+        <div class="chip" data-val="Before / After / Bridge">Before / After / Bridge</div>
+        <div class="chip" data-val="Story → Angebot">Story → Angebot</div>
+        <div class="chip" data-val="Frei">Frei</div>
+      </div>
+      <div style="background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-family:sans-serif; font-size:12px; color:var(--mid); line-height:1.7; margin-top:10px;">
+        <strong>AIDA</strong>: Interest → Desire → Action &nbsp;|&nbsp; <strong>PAS</strong>: Problem → Agitate → Solution &nbsp;|&nbsp; <strong>Before/After/Bridge</strong>: Davor → Danach → Brücke &nbsp;|&nbsp; <strong>Story → Angebot</strong>: Erst Geschichte, dann Angebot &nbsp;|&nbsp; <strong>Frei</strong>: KI entscheidet
       </div>
     </div>
   </div>
@@ -1350,7 +1377,7 @@ const CAPTION_CHIP_IDS = ['captionZielgruppeChips','captionZielgruppeChips2',
 
 document.querySelectorAll('.chip-group').forEach(group => {
   if (CAPTION_CHIP_IDS.includes(group.id)) return; // handled by caption logic below
-  const isMulti = ['hookTypeChips'].includes(group.id);
+  const isMulti = ['hookTypeChips', 'bodyStyleChips'].includes(group.id);
   group.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       if (isMulti) {
@@ -1508,7 +1535,11 @@ async function generate() {
   if (!apiKey) { openApiModal(); return; }
 
   const desc = document.getElementById('workshopDesc').value.trim();
-  if (!desc) { showStatus('⚠ Bitte beschreibe zuerst, was beworben werden soll.', 'error'); return; }
+  const landingUrl = document.getElementById('landingUrl').value.trim();
+  if (!desc && !fetchedPageContent && !landingUrl) {
+    showStatus('⚠ Bitte gib entweder eine Landingpage-URL ein oder beschreibe manuell, was beworben werden soll.', 'error');
+    return;
+  }
 
   const hookCount = parseInt(document.getElementById('hookCount').value) || 60;
   const hookTypes = getActiveChips('hookTypeChips');
@@ -1516,8 +1547,9 @@ async function generate() {
   const traffic = getActiveChips('trafficChips')[0] || 'Cold Traffic';
   const goal = getActiveChips('goalChips')[0] || 'Eintragungen';
   const pastHooks = document.getElementById('pastHooks').value.trim();
-  const landingUrl = document.getElementById('landingUrl').value.trim();
   const bodyCount = getActiveChips('bodyCountChips')[0] || '3';
+  const bodyStyles = getActiveChips('bodyStyleChips');
+  const bodyStructure = getActiveChips('bodyStructureChips')[0] || 'Frei';
   const ctaCount = getActiveChips('ctaCountChips')[0] || '3';
 
   if (hookTypes.length === 0) { showStatus('⚠ Wähle mindestens einen Hook-Typ.', 'error'); return; }
@@ -1536,7 +1568,7 @@ async function generate() {
   document.getElementById('ctaCards').innerHTML = '';
 
   // Build the user prompt
-  let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pastHooks, landingUrl, bodyCount, ctaCount });
+  let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure });
 
   try {
     const raw = await callAnthropicWithRetry(apiKey, {
@@ -1592,7 +1624,7 @@ async function callAnthropicWithRetry(apiKey, body, maxRetries = 3) {
   }
 }
 
-function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pastHooks, landingUrl, bodyCount, ctaCount }) {
+function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure }) {
 
   // Determine cold/warm/retargeting split
   const isMix = traffic.startsWith('Mix');
@@ -1642,7 +1674,7 @@ Markiere TYP mit ❄️.`;
 Erstelle exakt ${hookCount} Facebook/Instagram Ad-Hooks, ${bodyCount} Body-Texte und ${ctaCount} Call-to-Actions für die Salmana Beauty Academy.
 
 ## WAS BEWORBEN WIRD
-${desc}
+${desc ? desc : '→ Kein manueller Text. Extrahiere Angebot, Nutzen & Details SELBST aus dem Landingpage-Inhalt unten. Nutze Headline, Bullets, Preise, Zeitraum, USPs.'}
 
 ## ZIEL DER AD
 ${goal}
@@ -1656,7 +1688,7 @@ ${placement}
 ${hookInstruction}`;
 
   if (landingUrl) prompt += `\n\n## LANDINGPAGE-URL\nDie Ad leitet auf: ${landingUrl}`;
-  if (fetchedPageContent) prompt += `\n\n## LANDINGPAGE-INHALT (automatisch ausgelesen – nutze relevante Infos)\n${fetchedPageContent.substring(0, 1500)}`;
+  if (fetchedPageContent) prompt += `\n\n## LANDINGPAGE-INHALT (automatisch ausgelesen – Primärquelle für Angebot, USPs, Daten)\n${fetchedPageContent.substring(0, 4000)}`;
   if (pastHooks) prompt += `\n\n## ERFOLGREICHE HOOKS AUS DER VERGANGENHEIT\nDiese Hooks haben gut performt – lerne daraus, schreibe ähnlich starke, aber NEUE Varianten:\n${pastHooks}`;
 
   prompt += `
@@ -1678,6 +1710,17 @@ Body 1 → führt Hook 1 fort. Body 2 → führt Hook 2 fort. Usw.
 Der Body beginnt mit der Emotion/Situation aus dem Hook – nahtlos, wie ein Gespräch das weitergeht.
 Kein CTA im Body. Emojis OK. Schreib wie du redest – kurze Sätze, Gesprächston, keine Floskeln.
 Schreib AUS DER SICHT VON SALMANA (Ich-Perspektive) wenn persönliche Erfahrung erwähnt wird.
+
+${bodyStyles && bodyStyles.length > 0 ? `BODY-STIL: ${bodyStyles.join(', ')} – Setze diesen Stil konsequent um:
+- Storytelling: wie ein Brief, echte Geschichte
+- Dialogisch: direkte Fragen, die Leserin antwortet innerlich
+- Listicle: klare Aufzählungen, scanbar
+- Fakten & Ergebnisse: konkrete Zahlen, kein Blabla
+- Empowerment: motivierend, aufbauend, kein Druck
+- Sozial Beweis: Absolventinnen-Geschichten einweben` : ''}
+
+${bodyStructure && bodyStructure !== 'Frei' ? `BODY-STRUKTUR (${bodyStructure}):
+${bodyStructure==='AIDA'?'Hook=Attention. Body: I=Leserin verstehen, D=Wunschleben malen + Ausbildung als Weg, A=sanft zur CTA hinleiten.':''}${bodyStructure==='PAS'?'Problem: Schmerz benennen. Agitate: verstärken, was passiert ohne Veränderung. Solution: Salmanas Ausbildung warm als Ausweg.':''}${bodyStructure==='Before / After / Bridge'?'Before: aktueller Zustand ehrlich. After: Leben nach Ausbildung emotional malen. Bridge: die 6-Wochen-Ausbildung als Verbindung.':''}${bodyStructure==='Story → Angebot'?'Story: echte Geschichte (Salmana oder Absolventin). Angebot: fließend anknüpfen, kein harter Schnitt.':''}` : ''}
 
 BODY_START
 NUMMER: [Zahl]
