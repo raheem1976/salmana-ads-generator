@@ -1854,29 +1854,90 @@ TEXT: [Der Hook-Text – 60–90 Wörter bei Cold ❄️ (5–7 Sätze, Umgangss
 HOOK_END
 
 ### 2. BODY-TEXTE (${bodyCount} Stück)
-WICHTIG: Jeder Body-Text greift DIREKT den emotionalen Winkel des entsprechenden Hooks auf.
-Body 1 → führt Hook 1 fort. Body 2 → führt Hook 2 fort. Usw.
 
-Der Body beginnt mit der Emotion/Situation aus dem Hook – nahtlos, wie ein Gespräch das weitergeht.
-Kein CTA im Body. Emojis OK. Schreib wie du redest – Umgangssprache, kurze Sätze, kein Marketing-Deutsch.
-Schreib AUS DER SICHT VON SALMANA (Ich-Perspektive) wenn persönliche Erfahrung erwähnt wird.
-WICHTIG FORMATIERUNG: Jeder Satz kommt in eine EIGENE ZEILE. Nach jedem Satz eine Leerzeile. Kein langer Fließtext.
+GRUNDREGELN FÜR JEDEN BODY – OHNE AUSNAHME:
+1. MINDESTLÄNGE: 150–220 Wörter. Kein Body darf kürzer sein.
+2. Body 1 → führt Hook 1 fort. Body 2 → führt Hook 2 fort. Nahtlos, wie ein Gespräch das weitergeht.
+3. Kein CTA im Body. Kein "Jetzt anmelden" – das kommt separat.
+4. Emojis OK, sparsam einsetzen.
+5. Sprache: Umgangssprache, Gesprächston, kurze Sätze. Kein Marketing-Deutsch, keine Floskeln.
+6. Schreib AUS DER SICHT VON SALMANA (Ich-Perspektive) wenn persönliche Erfahrung erwähnt wird.
+7. FORMATIERUNG: Jeder Satz kommt in eine EIGENE ZEILE. Nach jedem Satz eine Leerzeile. KEIN Fließtext.
+8. Mindestens EIN konkretes spezifisches Detail einbauen: eine Absolventinnen-Geschichte, eine Zahl, ein Ergebnis, ein echter Moment.
 
-${bodyStyles && bodyStyles.length > 0 ? `BODY-STIL: ${bodyStyles.join(', ')} – Setze diesen Stil konsequent um:
-- Storytelling: wie ein Brief, echte Geschichte
-- Dialogisch: direkte Fragen, die Leserin antwortet innerlich
-- Listicle: klare Aufzählungen, scanbar
-- Fakten & Ergebnisse: konkrete Zahlen, kein Blabla
-- Empowerment: motivierend, aufbauend, kein Druck
-- Sozial Beweis: Absolventinnen-Geschichten einweben` : ''}
+${bodyStyles && bodyStyles.length > 0 ? `BODY-STIL (Ton & Schreibweise): ${bodyStyles.join(', ')}
+- Storytelling: Erzähle eine echte Geschichte, persönlich, wie ein Brief an eine Freundin.
+- Dialogisch: Stelle direkte Fragen die die Leserin innerlich mit "JA!" beantwortet. "Kennst du das Gefühl wenn...?"
+- Listicle: Nutze klare Aufzählungen für Vorteile – aber baue vorher Emotion auf, nicht sofort die Liste.
+- Fakten & Ergebnisse: Konkrete Zahlen, Absolventinnen-Ergebnisse, Vorher-Nachher. Kein Blabla.
+- Empowerment: Motivierend, aufbauend, ohne Druck. Zeige dass sie es KANN.
+- Sozial Beweis: Webe Absolventinnen-Geschichten ein. "Letzte Woche hat mir Sarah geschrieben – sie hat jetzt ihren ersten eigenen Kurs..."
+Setze den/die gewählten Stil(e) konsequent um – von Anfang bis Ende.` : ''}
 
-${bodyStructure && bodyStructure !== 'Frei' ? `BODY-STRUKTUR (${bodyStructure}):
-${bodyStructure==='AIDA'?'Hook=Attention. Body: I=Leserin verstehen, D=Wunschleben malen + Ausbildung als Weg, A=sanft zur CTA hinleiten.':''}${bodyStructure==='PAS'?'Problem: Schmerz benennen. Agitate: verstärken, was passiert ohne Veränderung. Solution: Salmanas Ausbildung warm als Ausweg.':''}${bodyStructure==='Before / After / Bridge'?'Before: aktueller Zustand ehrlich. After: Leben nach Ausbildung emotional malen. Bridge: die 6-Wochen-Ausbildung als Verbindung.':''}${bodyStructure==='Story → Angebot'?'Story: echte Geschichte (Salmana oder Absolventin). Angebot: fließend anknüpfen, kein harter Schnitt.':''}` : ''}
+BODY-STRUKTUR: ${bodyStructure && bodyStructure !== 'Frei' ? bodyStructure : 'Frei'}
+${bodyStructure === 'AIDA' ? `
+AIDA-AUFBAU – PFLICHT. Jede Phase MUSS enthalten sein:
+
+▸ INTEREST (ca. 50–70 Wörter – PFLICHT: beginne mit dem SCHMERZ/PROBLEM):
+Fang NICHT mit dem Traumleben an. Fang mit dem aktuellen Problem der Leserin an.
+Zeige dass du genau weißt wie es sich anfühlt: der Job der nicht erfüllt, das Gefühl am Montagmorgen, das "Ich will mehr aber weiß nicht wie".
+Stelle 1–2 Fragen die sie innerlich mit "Ja, genau so ist das!" beantworten.
+Beispiel: "Du gehst jeden Morgen zur Arbeit und weißt schon beim Aufstehen: Das ist nicht das, was du wirklich willst. Kennst du dieses Ziehen?"
+
+▸ DESIRE (ca. 70–100 Wörter – PFLICHT: konkretes Wunschleben + konkretes Angebot):
+Jetzt zeige das NEUE LEBEN. Filmisch, konkret, emotional. Nicht "ein besseres Leben" – sondern: eigenes Studio, eigene Kunden, selbst entscheiden wann du arbeitest.
+Dann: Zeige den KONKRETEN WEG. Was bekommt sie genau in der Ausbildung? Was haben Absolventinnen danach erreicht?
+Mindestens EIN konkretes Ergebnis/Zahl/Geschichte: "Eine unserer Absolventinnen hat 3 Monate nach der Ausbildung ihren ersten eigenen Workshop gegeben."
+
+▸ ACTION (ca. 20–30 Wörter – PFLICHT: sanfte Dringlichkeit, keine Schrei-Taktik):
+Baue leise Dringlichkeit auf. Plätze begrenzt / Termin nähert sich / "Ich war auch mal an diesem Punkt."
+Mach ihr klar: Warten kostet sie mehr als Handeln.` : ''}
+${bodyStructure === 'PAS' ? `
+PAS-AUFBAU – PFLICHT. Alle 3 Phasen enthalten:
+
+▸ PROBLEM (ca. 40–60 Wörter): Benenne den konkreten Schmerz der Leserin. Direkt, ohne Umschweife.
+Nicht "viele Frauen fühlen sich..." – sondern "Du". Sprich SIE direkt an.
+Der Schmerz muss sich REAL anfühlen. "Du arbeitest 40 Stunden die Woche für jemand anderen – und fragst dich abends wozu eigentlich."
+
+▸ AGITATE (ca. 50–70 Wörter): Verstärke den Schmerz. Was passiert wenn sich NICHTS ändert?
+In einem Jahr sitzt du noch am selben Schreibtisch. In 5 Jahren hast du dich selbst vergessen.
+Zeige die Konsequenz des Nicht-Handelns. Emotional, aber niemals manipulativ – nur ehrlich.
+
+▸ SOLUTION (ca. 60–80 Wörter): Zeige Salmanas Ausbildung als konkreten, warmen Ausweg.
+Nicht "unsere Ausbildung ist toll" – sondern: was ändert sich konkret für sie danach?
+Mindestens eine konkrete Aussage über das Ergebnis / den Inhalt / eine Absolventin.` : ''}
+${bodyStructure === 'Before / After / Bridge' ? `
+BEFORE / AFTER / BRIDGE – PFLICHT:
+
+▸ BEFORE (ca. 40–60 Wörter): Beschreibe den aktuellen Zustand – ehrlich, empathisch, in ihrer Sprache.
+Nicht bewerten. Nur zeigen. "Du stehst jeden Morgen auf und weißt: Das war's noch nicht."
+
+▸ AFTER (ca. 50–70 Wörter): Male das Leben NACH der Ausbildung – konkret, sinnlich, wünschenswert.
+Eigenes Studio. Eigene Kunden. Eigene Zeit. Mindestens ein konkretes Bild malen.
+
+▸ BRIDGE (ca. 50–70 Wörter): Zeige den Weg dazwischen.
+Nicht "mit uns schaffst du das" – sondern konkret: was passiert in der Ausbildung, wie lange dauert es, was lernst du, was haben andere danach erreicht.` : ''}
+${bodyStructure === 'Story → Angebot' ? `
+STORY → ANGEBOT – PFLICHT:
+
+▸ STORY (ca. 90–120 Wörter): Erzähle eine echte, persönliche Geschichte.
+Entweder Salmanas eigene Geschichte (Ich-Perspektive) ODER die Geschichte einer Absolventin – mit konkreten Details, nicht nur Gefühlen.
+Die Geschichte muss einen Wendepunkt haben: vorher / der Moment der Entscheidung / nachher.
+
+▸ ANGEBOT (ca. 50–80 Wörter): Knüpfe natürlich an – kein harter Schnitt.
+"Genau deshalb habe ich diese Ausbildung aufgebaut." / "Das ist der Grund warum ich diesen Workshop anbiete."
+Dann: Was bekommt sie konkret? Was ändert sich?` : ''}
+${!bodyStructure || bodyStructure === 'Frei' ? `
+FREIER AUFBAU – aber diese Phasen MÜSSEN alle vorkommen:
+1. Schmerz/Problem der Leserin (30–50 Wörter) – konkret, in ihrer Sprache
+2. Problemverstärkung ODER Sehnsucht (40–60 Wörter) – was kostet das Warten / wie könnte es sein
+3. Lösung / Angebot konkret (50–70 Wörter) – was bekommt sie, was ändert sich
+4. Sanfte Dringlichkeit (15–25 Wörter) – leise, nie aggressiv` : ''}
 
 BODY_START
 NUMMER: [Zahl]
 PASST ZU HOOK: [Hook-Nummer]
-TEXT: [Der Body-Text – greift Hook-Emotion direkt auf, Ich-Perspektive wenn Salmana spricht]
+TEXT: [Der Body-Text – MINDESTENS 150 Wörter, alle Phasen enthalten, Satz pro Zeile]
 BODY_END
 
 ### 3. CALL TO ACTIONS (${ctaCount} Stück)
