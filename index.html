@@ -767,6 +767,14 @@
         <div id="trafficHint" style="display:none; margin-top:-8px; padding:10px 14px; background:rgba(201,168,76,0.07); border-radius:8px; font-family:sans-serif; font-size:12px; color:var(--gold-dark); line-height:1.7;"></div>
       </div>
     </div>
+
+    <label style="margin-top:16px;"><strong>Zielgruppe</strong> <span style="font-size:12px; color:var(--mid);">(wen soll die Ad ansprechen?)</span></label>
+    <div class="chip-group" id="zielgruppeChips">
+      <div class="chip active" data-val="Angestellt">👩‍💼 Angestellt</div>
+      <div class="chip" data-val="Mutter in Elternzeit">👶 Elternzeit</div>
+      <div class="chip" data-val="Selbständig (Beauty)">✂️ Selbständig</div>
+      <div class="chip" data-val="Guter Mix">🎯 Guter Mix</div>
+    </div>
   </div>
 
   <!-- SECTION 4: Erfolgreiche Hooks -->
@@ -928,15 +936,10 @@
 
     <label><strong>Welche Zielgruppe sprichst du an?</strong></label>
     <div class="chip-group" id="captionZielgruppeChips">
-      <div class="chip active" data-val="Allgemein / Offen – spricht alle Archetypen an, Fokus auf Freiheit und Veränderung">🌍 Allgemein</div>
-      <div class="chip" data-val="Mamas & Elternzeit – Kita-Moment, Zeit für Kind und eigenes Business, nicht zurück in alten Job">👶 Mamas &amp; Elternzeit</div>
-      <div class="chip" data-val="Ausgebrannte / Berufswechslerinnen – innerlich schon längst gekündigt, Wecker-Moment, Vollzeit-Gefangene">😤 Ausgebrannte</div>
-      <div class="chip" data-val="Alleinerziehende – trägt alles allein, will finanzielle Unabhängigkeit, Vorbild für Kinder">👩‍👧 Alleinerziehende</div>
-    </div>
-    <div class="chip-group" id="captionZielgruppeChips2" style="margin-top:-8px;">
-      <div class="chip" data-val="Enttäuschte – hat Geld in Crashkurse investiert, Vertrauensproblem, will echte Ausbildung">😓 Crashkurs-Enttäuschte</div>
-      <div class="chip" data-val="Beauty-Selbstständige – bereits in Beauty tätig, will PMU ergänzen oder Technik verbessern">💄 Beauty-Selbstständige</div>
-      <div class="chip" data-val="Träumerinnen / Zweiflerinnen – weiß dass sie mehr kann, hohes Selbstzweifel-Level, Talent-Angst">💭 Träumerin / Zweiflerin</div>
+      <div class="chip active" data-val="Angestellt">👩‍💼 Angestellt</div>
+      <div class="chip" data-val="Mutter in Elternzeit">👶 Elternzeit</div>
+      <div class="chip" data-val="Selbständig (Beauty)">✂️ Selbständig</div>
+      <div class="chip" data-val="Guter Mix">🎯 Guter Mix</div>
     </div>
 
     <div style="margin-top:12px;">
@@ -1463,7 +1466,7 @@ function updateHeaderModelLabel() {
 //  CHIP LOGIC
 // ─────────────────────────────────────────────
 // Caption chip groups are handled separately – exclude them here
-const CAPTION_CHIP_IDS = ['captionZielgruppeChips','captionZielgruppeChips2',
+const CAPTION_CHIP_IDS = ['captionZielgruppeChips',
   'captionTypChips','captionCountChips','captionHashtagChips','captionTrafficChips'];
 
 document.querySelectorAll('.chip-group').forEach(group => {
@@ -1701,6 +1704,7 @@ async function generate() {
   const placement = getActiveChips('placementChips')[0] || 'Feed';
   const traffic = getActiveChips('trafficChips')[0] || 'Cold Traffic';
   const goal = getActiveChips('goalChips')[0] || 'Eintragungen';
+  const zielgruppe = getActiveChips('zielgruppeChips')[0] || 'Guter Mix';
   const pastHooks = document.getElementById('pastHooks').value.trim();
   const bodyCount = getActiveChips('bodyCountChips')[0] || '3';
   const bodyStyles = getActiveChips('bodyStyleChips');
@@ -1723,7 +1727,7 @@ async function generate() {
   document.getElementById('ctaCards').innerHTML = '';
 
   // Build the user prompt
-  let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure });
+  let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure });
 
     try {
     const raw = await callWithActiveProvider(BRAND_SYSTEM_PROMPT, userPrompt);
@@ -1774,7 +1778,7 @@ async function callAnthropicWithRetry(apiKey, body, maxRetries = 3) {
   }
 }
 
-function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure }) {
+function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure }) {
 
   // Determine cold/warm/retargeting split
   const isMix = traffic.startsWith('Mix');
@@ -1823,6 +1827,44 @@ Erstelle exakt ${hookCount} Facebook/Instagram Ad-Hooks, ${bodyCount} Body-Texte
 
 ## WAS BEWORBEN WIRD
 ${desc ? desc : '→ Kein manueller Text. Extrahiere Angebot, Nutzen & Details SELBST aus dem Landingpage-Inhalt unten. Nutze Headline, Bullets, Preise, Zeitraum, USPs.'}
+
+## ZIELGRUPPE
+${(() => {
+  const zgMap = {
+    'Angestellt': `ZIELGRUPPE: Angestellte Frauen – schreibe gezielt für diese Lebenssituation.
+Typische Berufe (nutze diese für konkrete Bilder und Ansprachen):
+- Bürokauffrau / Assistentin / Sachbearbeiterin
+- Medizinische Fachangestellte (MFA) / Arzthelferin
+- Zahnmedizinische Fachangestellte (ZFA)
+- Verkäuferin / Kassiererin (Lidl, Rewe, Aldi, Rossmann, DM…)
+- Erzieherin / Kinderpflegerin / Sozialpädagogin
+- Gesundheits- und Krankenpflegerin / Altenpflegerin / Pflegehelferin
+- Friseurin oder Kosmetikerin im Angestelltenverhältnis
+- Hotelfachfrau / Servicekraft in Gastronomie
+- Lehrerin / Schulassistentin / Sozialarbeiterin
+- Pharmazeutisch-kaufmännische Angestellte (PKA)
+- Buchhalterin / Steuerfachangestellte
+- Reinigungskraft / Hauswirtschafterin
+
+Diese Frauen tauschen Zeit gegen Geld. Der Wecker klingelt montags und sie wissen schon beim Aufstehen: Das ist nicht das, was ich wollte. Sie wollen raus – aber sie wissen nicht wie und haben Angst vor dem Risiko.
+Spreche KONKRETE Berufsbilder an. Spezifisch, sodass sie sich direkt erkannt fühlen. Z.B.: "Du stehst 8 Stunden an der Kasse" oder "Du sitzt in der Arztpraxis und nimmst Termine entgegen."`,
+    'Mutter in Elternzeit': `ZIELGRUPPE: Mütter in Elternzeit – schreibe gezielt für diese Lebenssituation.
+Diese Frauen sind 1–3 Jahre zu Hause mit ihrem Kind (0–3 Jahre). In den Stunden während des Mittagsschlafs denken sie nach: "Was mache ich danach? Will ich wirklich zurück in meinen alten Job?"
+Sie suchen nach einem Neustart, der zu Familie UND eigenem Leben passt.
+Typische Gedanken: "Ich will nicht für immer Teilzeit arbeiten." / "Ich will etwas Eigenes – aber was?" / "Kann ich das wirklich, wenn ich doch gerade Mama bin?"
+Spreche die ruhige Offenheit an, nicht den Druck. Zeige einen sanften, machbaren ersten Schritt.
+Konkrete Bilder: "Während die Kleine schläft", "Am Küchentisch mit dem Laptop", "Zwischen Windeln und Träumen".`,
+    'Selbständig (Beauty)': `ZIELGRUPPE: Bereits selbstständige Frauen im Beauty-Bereich – schreibe gezielt für diese Lebenssituation.
+Typische Berufe: Kosmetikerin mit eigenem Studio, Friseurin, Nageldesignerin, Wimpernstudio, mobile Beauty-Unternehmerin.
+Diese Frauen haben ihr Business bereits gestartet – aber stecken beim Wachstum fest. Ihre Hände sind ihr Kapital, aber sie limitieren ihr Einkommen.
+Typische Schmerzpunkte: "Wenn ich nicht arbeite, verdiene ich nichts." / "Ich will mehr verlangen – aber wie?" / "Ich will PMU dazulernen – aber wo richtig?"
+Zeige PMU als strategische Erweiterung – nicht als kompletten Neuanfang.`,
+    'Guter Mix': `ZIELGRUPPE: Guter Mix – alle drei Gruppen ansprechen.
+Verteile gleichmäßig auf: ~40% Angestellte (Büro, Pflege, Einzelhandel – konkrete Berufe und Momente), ~35% Mütter in Elternzeit (Mittagsschlaf, Nachdenken, sanfter Einstieg), ~25% Selbstständige im Beauty-Bereich (Skalierung, PMU als Upsell).
+Wechsle zwischen den Ansprachen. Jede Frau soll sich in mindestens einem Text direkt wiedererkennen.`
+  };
+  return zgMap[zielgruppe] || `ZIELGRUPPE: ${zielgruppe}`;
+})()}
 
 ## ZIEL DER AD
 ${goal}
@@ -2209,22 +2251,15 @@ window.addEventListener('load', () => {
 // ─────────────────────────────────────────────
 //  CAPTION CHIP LOGIC (separate groups)
 // ─────────────────────────────────────────────
-['captionZielgruppeChips', 'captionZielgruppeChips2', 'captionTypChips',
+['captionZielgruppeChips', 'captionTypChips',
  'captionCountChips', 'captionHashtagChips', 'captionTrafficChips'].forEach(id => {
   const grp = document.getElementById(id);
   if (!grp) return;
   const multi = ['captionTypChips'].includes(id);
-  // For Zielgruppe: single across both groups
-  const isZielgruppe = ['captionZielgruppeChips','captionZielgruppeChips2'].includes(id);
   grp.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       if (multi) {
         chip.classList.toggle('active');
-      } else if (isZielgruppe) {
-        // Deactivate across BOTH zielgruppe groups
-        document.querySelectorAll('#captionZielgruppeChips .chip, #captionZielgruppeChips2 .chip')
-          .forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
       } else {
         grp.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
@@ -2254,9 +2289,7 @@ function getCaptionChip(groupId) {
   return active ? active.dataset.val : '';
 }
 function getCaptionZielgruppe() {
-  const a1 = document.querySelector('#captionZielgruppeChips .chip.active');
-  const a2 = document.querySelector('#captionZielgruppeChips2 .chip.active');
-  return (a1 || a2)?.dataset.val || 'Allgemein';
+  return document.querySelector('#captionZielgruppeChips .chip.active')?.dataset.val || 'Guter Mix';
 }
 function getCaptionTypen() {
   return [...document.querySelectorAll('#captionTypChips .chip.active')].map(c => c.dataset.val);
@@ -2489,7 +2522,27 @@ ${thema}
 ${url ? `\nLandingpage-URL: ${url}` : ''}
 
 ## ZIELGRUPPE
-${zielgruppe}
+${(() => {
+  const zgMap = {
+    'Angestellt': `ZIELGRUPPE: Angestellte Frauen
+Typische Berufe (nutze konkrete Bilder daraus): Bürokauffrau / Assistentin, Medizinische Fachangestellte (MFA), Zahnmedizinische Fachangestellte (ZFA), Verkäuferin / Kassiererin (Lidl, Rewe, Aldi…), Erzieherin / Pflegehelferin / Altenpflegerin, Friseurin oder Kosmetikerin im Angestelltenverhältnis, Hotelfachfrau / Servicekraft, Reinigungskraft.
+Diese Frauen tauschen Zeit gegen Geld. Der Wecker klingelt – sie stehen auf – und wissen schon: Das war's noch nicht.
+Spreche spezifische Momente an: "Du stehst 8 Stunden an der Kasse", "Montag 8 Uhr, Schreibtisch, derselbe Ablauf wie immer."`,
+    'Mutter in Elternzeit': `ZIELGRUPPE: Mütter in Elternzeit
+Diese Frauen sind 1–3 Jahre zu Hause mit ihrem Kind. In den Stunden während des Mittagsschlafs denken sie nach: "Was mache ich danach?"
+Konkrete Bilder: "Während die Kleine schläft", "Am Küchentisch mit dem Laptop", "In der Stille nach dem Kinderlachen."
+Sanft, nicht drängend. Sie sind bereits im Wandel – zeige den ersten machbaren Schritt.`,
+    'Selbständig (Beauty)': `ZIELGRUPPE: Selbstständige Frauen im Beauty-Bereich
+Kosmetikerin, Friseurin, Nageldesignerin, Wimpernstudio, mobile Beauty-Unternehmerin.
+Bereits im Markt – aber stecken beim Wachstum fest. Ihre Hände limitieren ihr Einkommen.
+Schmerzpunkte: "Wenn ich nicht arbeite, verdiene ich nichts." / "Wie rechtfertige ich höhere Preise?" / "Ich will PMU – aber wo richtig lernen?"
+Zeige PMU als strategische Erweiterung, nicht als Neuanfang.`,
+    'Guter Mix': `ZIELGRUPPE: Guter Mix – alle drei Gruppen ansprechen.
+~40% Angestellte (Büro, Pflege, Einzelhandel – konkrete Berufe und Momente), ~35% Mütter in Elternzeit, ~25% Selbstständige Beauty.
+Jede Frau soll sich in mindestens einer Caption direkt wiedererkennen.`
+  };
+  return zgMap[zielgruppe] || `ZIELGRUPPE: ${zielgruppe}`;
+})()}
 
 ## CAPTION-TYP(EN)
 ${typen.join(', ')}
