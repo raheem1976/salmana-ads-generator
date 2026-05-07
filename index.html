@@ -1785,9 +1785,9 @@ function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, pas
   let hookInstruction = '';
   if (isMix) {
     hookInstruction = `Verteile die ${hookCount} Hooks wie folgt:
-- ${cold} Cold-Hooks (❄️): Kein PMU-Begriff. 60–90 Wörter, 5–7 Sätze. SZENE statt Aussage: Filmischer Alltagsmoment (Kita-Tür, Meeting, Sonntagabend, Gehaltsabrechnung). Test: Könnte man es filmen? – Zielfrau erfährt erst im Body, worum es geht.
-- ${warm} Warm-Hooks (🌤): "Beauty-Studio" oder "Permanent Make-up" darf vorkommen. Zielgruppe kennt Salmana bereits.
-- ${retarg} Retargeting-Hooks (🔥): PMU direkt, Einwände adressieren (Kosten, Talent, Kunden), sehr spezifisch.
+- ${cold} Cold-Hooks (❄️): Kein PMU-Begriff. GENAU 2 Sätze, 20–35 Wörter. SZENE statt Aussage – ein konkreter Alltagsmoment, so direkt dass sie ihn sofort erkennt. Schreib wie du redest, nicht wie du schreibst. Kein Marketing-Deutsch.
+- ${warm} Warm-Hooks (🌤): "Beauty-Studio" oder "Permanent Make-up" darf vorkommen. 1–2 Sätze, 15–25 Wörter. Persönlich und direkt, wie eine Freundin die redet.
+- ${retarg} Retargeting-Hooks (🔥): PMU direkt, Einwände adressieren. 1–2 Sätze, 15–25 Wörter. Konkret, fast provokant.
 Markiere jeden Hook mit dem passenden Emoji am Ende des TYP-Feldes.`;
   } else if (traffic.startsWith('Cold')) {
     hookInstruction = `Alle ${hookCount} Hooks sind Cold-Hooks (❄️): KEIN PMU-Begriff.
@@ -1797,21 +1797,19 @@ Ein Hook muss die Leserin in einen konkreten Moment versetzen – sie soll ihn v
 NICHT: eine Aussage über sie machen. SONDERN: sie in eine filmische Szene setzen.
 Test: Könnte man die Szene filmen? Ja → gut. Nur ein Gedanke → umschreiben.
 
-LÄNGE: 60–90 Wörter. 5–7 Sätze. Umgangssprache – schreib wie gesprochen, kein Marketing-Deutsch.
+LÄNGE: GENAU 2 SÄTZE. 20–35 Wörter gesamt. Kürzer ist stärker. Schreib wie du redest – nicht wie du schreibst.
 
-GUTE SZENEN-HOOKS:
-✅ 'Montag, 7 Uhr. Die Kita-Tür geht zu. Du drehst dich um. Und fährst wieder in ein Leben, das sich nicht wie deins anfühlt.'
-✅ 'Du sitzt im Meeting. Dein Chef redet. Du nickst. Innerlich bist du schon lange woanders.'
-✅ 'Freitagabend. Die Gehaltsabrechnung liegt auf dem Tisch. Wieder knapp. Du schaust kurz hin – und legst sie weg.'
-✅ 'Dein Kind fragt: Mama, was ist dein Traum? Du lachst. Aber die Frage lässt dich nicht schlafen.'
-✅ 'Du scrollst durch Instagram. Wieder eine Frau mit eigenem Studio. Kurz innehalten. Dann weiterscrollen.'
-✅ 'Sonntagabend. Morgen wieder Arbeit. Dieses Gefühl im Bauch – du willst es nicht mehr.'
+GUTE SZENEN-HOOKS (nicht kopieren – ähnlich denken. Genau diese Kürze):
+✅ "Du sitzt im Meeting und nickst – aber innerlich bist du schon lange woanders."
+✅ "Montagmorgen. Dieses Gefühl kennst du – und du willst es nicht mehr."
+✅ "Du scrollst durch Instagram und hältst inne. Und weißt genau warum."
+✅ "Dein Kind fragt dich was dein Traum ist – und du weißt nicht mehr was du sagen sollst."
+✅ "Freitagabend, Gehaltsabrechnung, wieder knapp. Du legst sie weg ohne draufzuschauen."
 
 SCHLECHTE HOOKS (so NICHT):
-❌ 'Du weißt seit Monaten, dass du mehr willst.' → Aussage, keine Szene
-❌ 'Was, wenn der Weg nur zwei Tage entfernt ist?' → Frage ohne Szene
-❌ 'Diese Nachricht ist für alle Mamas...' → Ansprache, keine Szene
-
+❌ "Du weißt seit Monaten, dass du mehr willst." → zu allgemein, keine Szene
+❌ "Was, wenn der Weg nur zwei Tage entfernt ist?" → klingt nach Werbung
+❌ 5–7 Sätze hintereinander → zu lang, verliert die Leserin
 Markiere TYP mit ❄️.`;
   } else if (traffic.startsWith('Warm')) {
     hookInstruction = `Alle ${hookCount} Hooks sind Warm-Hooks (🌤): "Beauty-Studio" oder "Permanent Make-up" darf vorkommen. Publikum kennt Salmana bereits. Markiere TYP mit 🌤.`;
@@ -1850,7 +1848,7 @@ ${hookInstruction}`;
 HOOK_START
 NUMMER: [Zahl]
 TYP: [Hook-Typ + Temperatur-Emoji]
-TEXT: [Der Hook-Text – 60–90 Wörter bei Cold ❄️ (5–7 Sätze, Umgangssprache, gesprochen); 40–60 Wörter bei Warm/Retargeting]
+TEXT: [Der Hook-Text – GENAU 2 Sätze, 20–35 Wörter bei Cold ❄️; 1–2 Sätze, 15–25 Wörter bei Warm 🌤/Retargeting 🔥. Wie gesprochen, kein Marketing-Deutsch.]
 HOOK_END
 
 ### 2. BODY-TEXTE (${bodyCount} Stück)
