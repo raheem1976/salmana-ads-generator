@@ -858,6 +858,25 @@
     </div>
   </div>
 
+  <!-- ZUSÄTZLICHE EINWÄNDE & INSIGHTS -->
+  <div class="section" style="margin-bottom:8px;">
+    <div class="section-title" style="cursor:pointer; user-select:none;" onclick="toggleZusatz(this)">
+      ⚡ Zusätzliche Einwände &amp; Insights
+      <span style="font-size:12px; font-weight:normal; color:var(--mid); margin-left:8px;">optional · gilt für Ads &amp; Captions</span>
+      <span style="float:right; transition:transform .2s;" id="zusatzIcon">▼</span>
+    </div>
+    <div id="zusatzContainer" style="display:none; margin-top:12px;">
+      <p style="font-size:13px; color:var(--mid); margin:0 0 8px; line-height:1.6;">
+        Füge Einwände, Probleme aus Beratungsgesprächen oder weitere Insights ein.<br>
+        Schreibe optional die Zielgruppe davor – sonst gilt der Punkt für alle.
+      </p>
+      <textarea id="zusatzInfos"
+        placeholder='Angestellte: "Ich hab kein Talent zum Zeichnen."&#10;Mütter: "Ich hab keine Zeit neben dem Baby."&#10;Artist: "Meine ersten Versuche waren nicht perfekt."&#10;Allgemein: "Das ist mir zu teuer."'
+        style="width:100%; min-height:130px; padding:12px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; line-height:1.6; resize:vertical; background:var(--warm-white); color:var(--dark); font-family:sans-serif; box-sizing:border-box; outline:none;"
+        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+    </div>
+  </div>
+
   <!-- GENERATE -->
   <button class="generate-btn" id="generateBtn" onclick="generate()">
     <div class="spinner" id="spinner"></div>
@@ -1712,6 +1731,7 @@ async function generate() {
   const bodyStyles = getActiveChips('bodyStyleChips');
   const bodyStructure = getActiveChips('bodyStructureChips')[0] || 'Frei';
   const ctaCount = getActiveChips('ctaCountChips')[0] || '3';
+  const zusatzInfos = getZusatzInfos();
 
   if (hookTypes.length === 0) { showStatus('⚠ Wähle mindestens einen Hook-Typ.', 'error'); return; }
 
@@ -1729,7 +1749,7 @@ async function generate() {
   document.getElementById('ctaCards').innerHTML = '';
 
   // Build the user prompt
-  let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure });
+  let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure, zusatzInfos });
 
     try {
     const raw = await callWithActiveProvider(BRAND_SYSTEM_PROMPT, userPrompt);
@@ -1780,7 +1800,7 @@ async function callAnthropicWithRetry(apiKey, body, maxRetries = 3) {
   }
 }
 
-function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure }) {
+function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure, zusatzInfos }) {
 
   // Determine cold/warm/retargeting split
   const isMix = traffic.startsWith('Mix');
@@ -2124,7 +2144,8 @@ CTA_START
 NUMMER: [Zahl]
 TYP: [z.B. "Weich / Neugier", "Direkt", "Dringlichkeit"]
 TEXT: [Der CTA-Text]
-CTA_END`;
+CTA_END
+${zusatzInfos ? `\n## ZUSÄTZLICHE EINWÄNDE & INSIGHTS\nNutze diese realen Einwände und Probleme gezielt in Hooks, Body-Texten und CTAs. Wenn eine Zielgruppe genannt ist, wende den Punkt nur für diese an – sonst allgemein:\n${zusatzInfos}` : ''}`;
 
   return prompt;
 }
@@ -2325,6 +2346,18 @@ function getCaptionChip(groupId) {
   const active = grp.querySelector('.chip.active');
   return active ? active.dataset.val : '';
 }
+function getZusatzInfos() {
+  return (document.getElementById('zusatzInfos')?.value || '').trim();
+}
+
+function toggleZusatz(el) {
+  const c = document.getElementById('zusatzContainer');
+  const icon = document.getElementById('zusatzIcon');
+  const open = c.style.display !== 'none';
+  c.style.display = open ? 'none' : 'block';
+  icon.textContent = open ? '▼' : '▲';
+}
+
 function getCaptionZielgruppe() {
   return document.querySelector('#captionZielgruppeChips .chip.active')?.dataset.val || 'Guter Mix';
 }
@@ -2525,7 +2558,8 @@ async function generateCaption() {
   document.getElementById('captionLoadingSkeleton').style.display = 'block';
   document.getElementById('captionCards').innerHTML = '';
 
-  const prompt = buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url });
+  const zusatzInfos = getZusatzInfos();
+  const prompt = buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url, zusatzInfos });
 
     try {
     const raw = await callWithActiveProvider(CAPTION_SYSTEM_PROMPT, prompt);
@@ -2544,7 +2578,7 @@ async function generateCaption() {
   }
 }
 
-function buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url }) {
+function buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url, zusatzInfos }) {
   const isRetargeting = traffic === 'retargeting';
 
   let trafficInstruction = isRetargeting
@@ -2625,7 +2659,8 @@ ZIELGRUPPE: [kurz, z.B. "Mamas & Elternzeit"]
 TYP: [z.B. "Empowerment"]
 TEXT:
 [Die fertige Caption – formatiert mit Absätzen und Emojis]
-CAPTION_END`;
+CAPTION_END
+${zusatzInfos ? `\n## ZUSÄTZLICHE EINWÄNDE & INSIGHTS\nNutze diese realen Einwände und Probleme gezielt in den Captions. Wenn eine Zielgruppe genannt ist, wende den Punkt nur für diese an – sonst allgemein:\n${zusatzInfos}` : ''}`;
 
   return prompt;
 }
