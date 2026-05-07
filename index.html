@@ -622,34 +622,57 @@
 
 <!-- API KEY MODAL -->
 <div class="api-modal" id="apiModal">
-  <div class="api-modal-box">
-    <h3>Claude API-Key einrichten</h3>
-    <p>Du brauchst einen Anthropic API-Key. Hol ihn dir unter <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Er wird nur lokal in deinem Browser gespeichert.</p>
-    <label><strong>API-Key</strong></label>
-    <input type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+  <div class="api-modal-box" style="max-width:560px; width:100%;">
+    <h3>KI &amp; API-Keys einrichten</h3>
+    <p style="margin-bottom:16px;">Richte eine oder beide KIs ein. Danach kannst du auf der Hauptseite wechseln.</p>
 
-    <label style="margin-top:4px;"><strong>Modell</strong></label>
-    <div class="model-cards" id="modelCards">
-      <div class="model-card active" data-model="claude-sonnet-4-6" onclick="selectModel(this)">
-        <div class="model-card-header">
-          <span class="model-name">Sonnet 4.6</span>
-          <span class="model-badge recommended">⭐ Empfohlen</span>
+    <!-- Provider Tabs -->
+    <div style="display:flex; gap:0; margin-bottom:20px; border:1.5px solid var(--border); border-radius:10px; overflow:hidden;">
+      <button id="tabClaude" onclick="switchProviderTab('claude')" style="flex:1; padding:12px; font-family:sans-serif; font-size:14px; font-weight:600; border:none; cursor:pointer; background:var(--gold); color:#fff; transition:all .2s;">&#x1F9E0; Claude (Anthropic)</button>
+      <button id="tabOpenai" onclick="switchProviderTab('openai')" style="flex:1; padding:12px; font-family:sans-serif; font-size:14px; font-weight:600; border:none; cursor:pointer; background:var(--cream); color:var(--dark); border-left:1.5px solid var(--border); transition:all .2s;">&#x1F916; ChatGPT (OpenAI)</button>
+    </div>
+
+    <!-- Claude Tab -->
+    <div id="claudeTab">
+      <p style="margin-bottom:12px;">API-Key von <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> &#x2013; wird nur lokal gespeichert.</p>
+      <label><strong>Anthropic API-Key</strong></label>
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+      <label style="margin-top:16px;"><strong>Modell</strong></label>
+      <div class="model-cards" id="claudeModelCards">
+        <div class="model-card active" data-model="claude-sonnet-4-6" onclick="selectClaudeModel(this)">
+          <div class="model-card-header"><span class="model-name">Sonnet 4.6</span><span class="model-badge recommended">&#x2B50; Empfohlen</span></div>
+          <div class="model-desc">Bestes Preis-Leistungs-Verhältnis. Kreatives Copywriting auf Agentur-Niveau, ideal für starke Hooks.</div>
         </div>
-        <div class="model-desc">Bestes Preis-Leistungs-Verhältnis. Kreatives Copywriting auf Agentur-Niveau, versteht emotionale Zwischentöne. Ideal für starke Hooks.</div>
+        <div class="model-card" data-model="claude-opus-4-6" onclick="selectClaudeModel(this)">
+          <div class="model-card-header"><span class="model-name">Opus 4.6</span><span class="model-badge premium">&#x1F3C6; Premium</span></div>
+          <div class="model-desc">Maximale Qualität für wichtige Kampagnen. Tieferes Denken, nuanciertere Texte.</div>
+        </div>
+        <div class="model-card" data-model="claude-haiku-4-5-20251001" onclick="selectClaudeModel(this)">
+          <div class="model-card-header"><span class="model-name">Haiku 4.5</span><span class="model-badge fast">&#x26A1; Schnell</span></div>
+          <div class="model-desc">Sehr schnell und günstig &#x2013; gut für Brainstorming und erste Ideen.</div>
+        </div>
       </div>
-      <div class="model-card" data-model="claude-opus-4-6" onclick="selectModel(this)">
-        <div class="model-card-header">
-          <span class="model-name">Opus 4.6</span>
-          <span class="model-badge premium">🏆 Premium</span>
+    </div>
+
+    <!-- OpenAI Tab -->
+    <div id="openaiTab" style="display:none;">
+      <p style="margin-bottom:12px;">API-Key von <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a> &#x2013; wird nur lokal gespeichert.</p>
+      <label><strong>OpenAI API-Key</strong></label>
+      <input type="password" id="openaiKeyInput" placeholder="sk-..." />
+      <label style="margin-top:16px;"><strong>Modell</strong></label>
+      <div class="model-cards" id="openaiModelCards">
+        <div class="model-card active" data-model="gpt-4o" onclick="selectOpenaiModel(this)">
+          <div class="model-card-header"><span class="model-name">GPT-4o</span><span class="model-badge recommended">&#x2B50; Empfohlen</span></div>
+          <div class="model-desc">Flagship-Modell von OpenAI. Sehr starkes Copywriting, versteht Kontext und Emotionen.</div>
         </div>
-        <div class="model-desc">Maximale Qualität für wichtige Kampagnen. Tieferes strategisches Denken, nuanciertere Texte – langsamer und teurer.</div>
-      </div>
-      <div class="model-card" data-model="claude-haiku-4-5-20251001" onclick="selectModel(this)">
-        <div class="model-card-header">
-          <span class="model-name">Haiku 4.5</span>
-          <span class="model-badge fast">⚡ Schnell</span>
+        <div class="model-card" data-model="gpt-4o-mini" onclick="selectOpenaiModel(this)">
+          <div class="model-card-header"><span class="model-name">GPT-4o mini</span><span class="model-badge fast">&#x26A1; Schnell &amp; günstig</span></div>
+          <div class="model-desc">Sehr schnell und kostengünstig &#x2013; gut für erste Entwürfe und Brainstorming.</div>
         </div>
-        <div class="model-desc">Sehr schnell und günstig – gut für erste Ideen und Brainstorming. Für finale Ad-Copy weniger geeignet.</div>
+        <div class="model-card" data-model="gpt-4-turbo" onclick="selectOpenaiModel(this)">
+          <div class="model-card-header"><span class="model-name">GPT-4 Turbo</span><span class="model-badge premium">&#x1F3C6; Stärker</span></div>
+          <div class="model-desc">Älteres Flaggschiff mit großem Kontextfenster &#x2013; für komplexe, lange Prompts.</div>
+        </div>
       </div>
     </div>
 
@@ -659,7 +682,6 @@
     </div>
   </div>
 </div>
-
 <!-- MAIN -->
 <div class="main">
 
