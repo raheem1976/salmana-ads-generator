@@ -1826,11 +1826,86 @@ ${desc ? desc : '→ Kein manueller Text. Extrahiere Angebot, Nutzen & Details S
 
 ## ZIEL DER AD
 ${goal}
+${(() => {
+  const goalMap = {
+    'Eintragungen / Anmeldungen gewinnen': `→ ZIEL-INSTRUKTION: Eintragungen / Anmeldungen
+Deine Aufgabe ist es, die Leserin zur kostenlosen Eintragung oder Anmeldung zu bewegen – nicht zum Kauf.
+- Kein Preis nötig, kein Verkaufsdruck.
+- Senke die Hemmschwelle: "kostenlos", "unverbindlich", "du verlierst nichts".
+- CTA = immer Richtung Anmeldeseite / Eintragungsformular.
+- Die Ad soll Neugier und Wunsch wecken – die Landingpage macht den Rest.`,
+    'Klicks auf die Landingpage': `→ ZIEL-INSTRUKTION: Klicks
+Dein einziges Ziel: Die Leserin will mehr wissen. Sie soll klicken – nicht kaufen, nicht anmelden.
+- Erzeuge Neugier und einen offenen Bogen – die Antwort gibt's erst auf der Landingpage.
+- Kein vollständiges Angebot im Text. Nur so viel, dass sie klickt.
+- CTA = "Mehr erfahren", "Sieh selbst", "Hier lang".`,
+    'Awareness aufbauen': `→ ZIEL-INSTRUKTION: Awareness
+Diese Ad ist nicht zum Verkaufen. Salmana soll als Expertin wahrgenommen werden.
+- Kein harter CTA, kein "Jetzt anmelden".
+- Zeige Wert, Kompetenz, Persönlichkeit – ohne Angebot zu pushen.
+- Emotion und Identifikation stehen im Vordergrund.
+- Wenn CTA: weich – "Folge uns", "Schau mal vorbei", "Speicher das für später".`,
+    'Direktverkauf / Buchungen': `→ ZIEL-INSTRUKTION: Direktverkauf / Buchungen
+Die Leserin soll direkt buchen oder kaufen. Diese Ad spricht Menschen an, die kurz vor der Entscheidung stehen.
+- Preis darf genannt werden, wenn er überzeugend eingebettet ist.
+- Zeige konkreten Wert: was bekommt sie, was verändert sich, warum jetzt.
+- Dringlichkeit aufbauen: begrenzte Plätze, Datum, "nur noch X Tage".
+- CTA = direkt zur Buchung / zum Checkout.`
+  };
+  return goalMap[goal] || '';
+})()}
 
 ## PLACEMENT
 ${placement}
+${(() => {
+  const placementMap = {
+    'Feed (längerer Text OK)': `→ PLACEMENT-INSTRUKTION: Feed
+- Hooks: 2 Sätze, max. 35 Wörter. Der erste Satz entscheidet – er muss sofort stoppen.
+- Body: 150–220 Wörter sind ideal. Absätze und Leerzeilen nutzen – kein Fließtext-Block.
+- CTA: klar, direkt, am Ende. Ein Link, eine Handlung.`,
+    'Stories / Reels (sehr kurz, max. 3 Zeilen Hook)': `→ PLACEMENT-INSTRUKTION: Stories / Reels
+- Hooks: max. 1–2 Sätze, MAXIMAL 3 Zeilen sichtbar. Alles danach ist hinter "mehr" versteckt.
+- Kein langer Aufbau. Der erste Satz muss ALLEINE funktionieren.
+- Body: maximal 80–100 Wörter. Knapp, klar, schnell gelesen.
+- Kein Blocksatz. Kurze Sätze, viele Zeilenumbrüche.`,
+    'Beides': `→ PLACEMENT-INSTRUKTION: Feed + Stories / Reels
+- Schreibe Hooks so, dass sie sowohl im Feed als auch in Stories funktionieren.
+- Der erste Satz muss ALLEINE stehen können – alles Wichtige vor Satz 2.
+- Vermeide Hooks die mehr als 2 Zeilen brauchen um verständlich zu sein.
+- Body für Feed optimiert (150–220 Wörter), aber mit sauberem Absatz-Aufbau der auch mobil gut lesbar ist.`
+  };
+  return placementMap[placement] || '';
+})()}
 
-## HOOK-TYPEN (mische diese Kategorien): ${hookTypes.join(', ')}
+## HOOK-TYPEN
+${(() => {
+  const hookTypeMap = {
+    'Schmerzpunkt': `😔 SCHMERZPUNKT – Sprich den konkreten Schmerz der Leserin an. Direkt, ehrlich, ohne zu dramatisieren.
+    Sie soll denken: "Genau das ist mein Problem." Kein Mitleid – Verständnis.
+    Beispiel: "Du weißt dass du mehr kannst. Aber irgendwie passiert nichts."`,
+    'Traumvision': `✨ TRAUMVISION – Male das Leben das sie sich wünscht. Konkret, filmisch, sinnlich erlebbar.
+    Nicht "ein besseres Leben" – sondern: eigenes Studio, eigene Zeit, eigener Name.
+    Beispiel: "Stell dir vor du öffnest montags dein eigenes Studio – und du hast es selbst aufgebaut."`,
+    'Neugier / Frage': `🤔 NEUGIER / FRAGE – Stelle eine Frage oder eröffne einen offenen Bogen den sie nur durch Klicken schließen kann.
+    Kein "Wusstest du dass...?" – zu abgedroschen. Persönlicher, direkter.
+    Beispiel: "Wie viele Frauen aus meiner Ausbildung haben in 6 Wochen ihren ersten eigenen Kurs gegeben?"`,
+    'Ego-Label / Identität': `💪 EGO-LABEL / IDENTITÄT – Sprich eine bestehende oder angestrebte Identität direkt an.
+    Die Leserin soll denken: "Das bin ich" oder "Das will ich sein."
+    Beispiel: "Für Frauen, die wissen dass sie nicht fürs Büro gemacht sind."`,
+    'Story / Moment': `📖 STORY / MOMENT – Starte mit einem konkreten, echten Moment. Nicht "Es war einmal..." – ein Bild, ein Satz, ein Snapshot.
+    Die Geschichte beginnt direkt in der Szene. Kein Anlauf.
+    Beispiel: "Ich saß in meinem Auto und hab geweint. Wieder Montag. Wieder derselbe Job."`,
+    'Kontrovers / Provokativ': `⚡ KONTROVERS / PROVOKATIV – Sage etwas Überraschendes, das aufhorchen lässt – aber nie beleidigend oder reißerisch.
+    Kontra-Intuition, ein Widerspruch, eine unbequeme Wahrheit.
+    Beispiel: "Die meisten Frauen warten auf den richtigen Moment. Den gibt's nicht."`,
+    'Zahlen / Fakten': `📊 ZAHLEN / FAKTEN – Konkrete Zahl oder Ergebnis als Hook-Einstieg. Spezifisch ist glaubwürdig – vage ist unsichtbar.
+    Keine runden Zahlen wenn möglich. Echte Ergebnisse wirken mehr als Versprechen.
+    Beispiel: "73 Frauen. Das ist wie viele in diesem Jahr bei uns gestartet haben."`
+  };
+  return hookTypes.map(t => hookTypeMap[t] || `- ${t}`).join('\n\n');
+})()}
+
+MISCHE diese Typen über die ${hookCount} Hooks hinweg. Jeder Typ kommt mindestens einmal vor wenn genug Hooks generiert werden.
 
 ## HOOK-INSTRUKTION
 ${hookInstruction}`;
