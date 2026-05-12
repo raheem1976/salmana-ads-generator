@@ -828,6 +828,22 @@
     font-style: italic;
   }
 
+  /* CLEAR FIELD BUTTON (für persistierte Textareas) */
+  .clear-field-btn {
+    background: transparent;
+    border: none;
+    color: var(--soft);
+    font-size: 11.5px;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+  .clear-field-btn:hover { color: var(--error); }
+
   /* INFO / HINT HELPERS */
   .info-box {
     border: 1px solid var(--border);
@@ -1118,7 +1134,8 @@
     </div>
     <input type="file" id="hookFileInput" accept=".txt,.csv" onchange="readFile(event)" />
 
-    <textarea id="pastHooks" rows="5" placeholder="Beispiel:&#10;Hook 1: 'Du träumst schon lange davon, dein eigenes Studio zu eröffnen – aber weißt nicht, wo du anfangen sollst.'&#10;Hook 2: 'Der Wecker klingelt. Und du weißt: Das ist nicht das Leben, das du dir vorgestellt hast.'&#10;..."></textarea>
+    <textarea id="pastHooks" rows="5" oninput="persistTextField('pastHooks', 'salmana_past_hooks')" placeholder="Beispiel:&#10;Hook 1: 'Du träumst schon lange davon, dein eigenes Studio zu eröffnen – aber weißt nicht, wo du anfangen sollst.'&#10;Hook 2: 'Der Wecker klingelt. Und du weißt: Das ist nicht das Leben, das du dir vorgestellt hast.'&#10;..."></textarea>
+    <button type="button" class="clear-field-btn" id="pastHooksClearBtn" onclick="clearPersistedTextField('pastHooks', 'salmana_past_hooks')" style="display:none;">Inhalt löschen</button>
   </div>
 
   <!-- SECTION 5: Body & CTA -->
@@ -1197,9 +1214,11 @@
         Schreibe optional die Zielgruppe davor – sonst gilt der Punkt für alle.
       </p>
       <textarea id="zusatzInfos"
+        oninput="persistTextField('zusatzInfos', 'salmana_zusatz_infos')"
         placeholder='Angestellte: "Ich hab kein Talent zum Zeichnen."&#10;Mütter: "Ich hab keine Zeit neben dem Baby."&#10;Artist: "Meine ersten Versuche waren nicht perfekt."&#10;Allgemein: "Das ist mir zu teuer."'
         style="width:100%; min-height:130px; padding:12px; border:1.5px solid var(--border); border-radius:4px; font-size:14px; line-height:1.6; resize:vertical; background:var(--warm-white); color:var(--dark);  box-sizing:border-box; outline:none;"
         onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      <button type="button" class="clear-field-btn" id="zusatzInfosClearBtn" onclick="clearPersistedTextField('zusatzInfos', 'salmana_zusatz_infos')" style="display:none;">Inhalt löschen</button>
     </div>
   </div>
 
@@ -1799,6 +1818,44 @@ function toggleKb() {
   toggle.textContent = isOpen ? '−' : '+';
 }
 
+// ─────────────────────────────────────────────
+//  PERSISTED TEXT FIELDS (pastHooks, zusatzInfos)
+// ─────────────────────────────────────────────
+function persistTextField(elId, storageKey) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const val = el.value;
+  if (val.trim()) localStorage.setItem(storageKey, val);
+  else localStorage.removeItem(storageKey);
+  updateClearBtnVisibility(elId);
+}
+
+function clearPersistedTextField(elId, storageKey) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!el.value.trim()) return;
+  if (!confirm('Inhalt wirklich löschen?')) return;
+  el.value = '';
+  localStorage.removeItem(storageKey);
+  updateClearBtnVisibility(elId);
+}
+
+function updateClearBtnVisibility(elId) {
+  const el = document.getElementById(elId);
+  const btn = document.getElementById(elId + 'ClearBtn');
+  if (!el || !btn) return;
+  btn.style.display = el.value.trim() ? 'inline-block' : 'none';
+}
+
+function restorePersistedTextField(elId, storageKey) {
+  const val = localStorage.getItem(storageKey);
+  if (!val) return;
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.value = val;
+  updateClearBtnVisibility(elId);
+}
+
 function buildKnowledgeBaseSection() {
   const kb = getKnowledgeBase().filter(f => f.enabled);
   if (!kb.length) return '';
@@ -2148,7 +2205,9 @@ function readFile(e) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    document.getElementById('pastHooks').value = (document.getElementById('pastHooks').value + '\n\n' + ev.target.result).trim();
+    const el = document.getElementById('pastHooks');
+    el.value = (el.value + '\n\n' + ev.target.result).trim();
+    persistTextField('pastHooks', 'salmana_past_hooks');
   };
   reader.readAsText(file);
 }
@@ -2920,6 +2979,8 @@ window.addEventListener('load', () => {
   updateHeaderModelLabel();
   updateCostDisplay();
   renderKnowledgeBase();
+  restorePersistedTextField('pastHooks', 'salmana_past_hooks');
+  restorePersistedTextField('zusatzInfos', 'salmana_zusatz_infos');
   const hasClaude = !!localStorage.getItem('salmana_api_key');
   const hasOpenAI = !!localStorage.getItem('salmana_openai_key');
   if (!hasClaude && !hasOpenAI) {
