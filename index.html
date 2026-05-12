@@ -85,6 +85,7 @@
     align-items: center;
     gap: 12px;
   }
+  .cost-wrapper { position: relative; }
   .cost-display {
     font-size: 12px;
     font-weight: 500;
@@ -94,14 +95,65 @@
     border-radius: 4px;
     cursor: pointer;
     user-select: none;
-    transition: all 0.2s;
+    transition: all 0.15s;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .cost-display:hover {
     background: rgba(232,213,163,0.08);
     border-color: rgba(232,213,163,0.5);
   }
   .cost-display strong { color: var(--gold); font-weight: 700; }
+  .cost-arrow { font-size: 9px; opacity: 0.65; transition: transform 0.15s; }
+  .cost-wrapper.open .cost-arrow { transform: rotate(180deg); }
+
+  .cost-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    min-width: 200px;
+    z-index: 150;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    display: none;
+    padding: 4px 0;
+  }
+  .cost-wrapper.open .cost-menu { display: block; }
+  .cost-menu button {
+    display: flex;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 9px 16px;
+    font-size: 12.5px;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--dark);
+    cursor: pointer;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .cost-menu button:hover { background: var(--cream); }
+  .cost-menu button.active {
+    background: rgba(201,168,76,0.08);
+    color: var(--gold-dark);
+    font-weight: 600;
+  }
+  .cost-menu .menu-amount {
+    font-size: 11.5px;
+    color: var(--soft);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .cost-menu button.active .menu-amount { color: var(--gold-dark); }
+  .cost-menu-divider { border-top: 1px solid var(--border-soft); margin: 4px 0; }
+  .cost-menu-reset { color: var(--error) !important; font-size: 12px !important; }
+  .cost-menu-reset:hover { background: #FDEBEB !important; }
   .api-key-btn {
     background: transparent;
     border: 1px solid rgba(201,168,76,0.5);
@@ -726,7 +778,21 @@
     </div>
   </div>
   <div class="header-actions">
-    <div class="cost-display" id="costDisplay" onclick="resetCost()" title="Klick zum Zurücksetzen">Heute <strong>$0.00</strong> · Gesamt <strong>$0.00</strong></div>
+    <div class="cost-wrapper" id="costWrapper">
+      <div class="cost-display" id="costDisplay" onclick="toggleCostMenu(event)" title="Zeitraum wählen">
+        <span id="costLabel">Heute: <strong>€0,00</strong></span>
+        <span class="cost-arrow">▾</span>
+      </div>
+      <div class="cost-menu" id="costMenu">
+        <button data-range="today" onclick="setCostRange('today')">Heute <span class="menu-amount" data-amount="today">€0,00</span></button>
+        <button data-range="last7" onclick="setCostRange('last7')">Letzte 7 Tage <span class="menu-amount" data-amount="last7">€0,00</span></button>
+        <button data-range="thisMonth" onclick="setCostRange('thisMonth')">Diesen Monat <span class="menu-amount" data-amount="thisMonth">€0,00</span></button>
+        <button data-range="lastMonth" onclick="setCostRange('lastMonth')">Letzten Monat <span class="menu-amount" data-amount="lastMonth">€0,00</span></button>
+        <button data-range="total" onclick="setCostRange('total')">Gesamt <span class="menu-amount" data-amount="total">€0,00</span></button>
+        <div class="cost-menu-divider"></div>
+        <button class="cost-menu-reset" onclick="resetCost()">Daten zurücksetzen…</button>
+      </div>
+    </div>
     <button class="api-key-btn" onclick="openApiModal()">Einstellungen</button>
   </div>
 </header>
@@ -1484,49 +1550,130 @@ function fmtPrice(p) {
 }
 
 // ─────────────────────────────────────────────
-//  COST TRACKING
+//  COST TRACKING (USD → EUR, Zeitraum-basiert)
 // ─────────────────────────────────────────────
+const USD_TO_EUR = 0.92; // FX-Kurs USD→EUR (manuell pflegen, Stand 2026-05)
+
+const RANGE_LABELS = {
+  today: 'Heute',
+  last7: 'Letzte 7 Tage',
+  thisMonth: 'Diesen Monat',
+  lastMonth: 'Letzten Monat',
+  total: 'Gesamt'
+};
+
+const eurFormat = new Intl.NumberFormat('de-DE', {
+  style: 'currency', currency: 'EUR', minimumFractionDigits: 2
+});
+
+function migrateCostStorage() {
+  // Migration von alten Keys (salmana_cost_today + salmana_cost_day) → salmana_cost_daily
+  if (localStorage.getItem('salmana_cost_daily')) return;
+  const daily = {};
+  const oldToday = parseFloat(localStorage.getItem('salmana_cost_today') || '0');
+  const oldDay = localStorage.getItem('salmana_cost_day');
+  if (oldToday > 0 && oldDay) daily[oldDay] = oldToday;
+  localStorage.setItem('salmana_cost_daily', JSON.stringify(daily));
+  // Alte Keys entfernen
+  localStorage.removeItem('salmana_cost_today');
+  localStorage.removeItem('salmana_cost_day');
+}
+
+function getDailyMap() {
+  try { return JSON.parse(localStorage.getItem('salmana_cost_daily') || '{}'); }
+  catch { return {}; }
+}
+
 function trackCost(model, inputTokens, outputTokens) {
   const m = MODEL_CATALOG[model];
   if (!m) return;
   const cost = (inputTokens * m.input + outputTokens * m.output) / 1_000_000;
 
   const today = new Date().toISOString().slice(0, 10);
-  const lastDay = localStorage.getItem('salmana_cost_day');
-  let todayCost = parseFloat(localStorage.getItem('salmana_cost_today') || '0');
-  if (lastDay !== today) {
-    todayCost = 0;
-    localStorage.setItem('salmana_cost_day', today);
-  }
-  todayCost += cost;
-  const totalCost = parseFloat(localStorage.getItem('salmana_cost_total') || '0') + cost;
+  const daily = getDailyMap();
+  daily[today] = (daily[today] || 0) + cost;
+  localStorage.setItem('salmana_cost_daily', JSON.stringify(daily));
 
-  localStorage.setItem('salmana_cost_today', todayCost.toString());
+  const totalCost = parseFloat(localStorage.getItem('salmana_cost_total') || '0') + cost;
   localStorage.setItem('salmana_cost_total', totalCost.toString());
+
   updateCostDisplay();
+}
+
+function getCostForRange(range) {
+  const daily = getDailyMap();
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  let cost = 0;
+
+  if (range === 'today') {
+    cost = daily[today] || 0;
+  } else if (range === 'last7') {
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(now); d.setDate(d.getDate() - i);
+      cost += daily[d.toISOString().slice(0, 10)] || 0;
+    }
+  } else if (range === 'thisMonth') {
+    const ym = today.slice(0, 7);
+    for (const [day, c] of Object.entries(daily)) {
+      if (day.startsWith(ym)) cost += c;
+    }
+  } else if (range === 'lastMonth') {
+    const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().slice(0, 7);
+    for (const [day, c] of Object.entries(daily)) {
+      if (day.startsWith(prev)) cost += c;
+    }
+  } else {
+    cost = parseFloat(localStorage.getItem('salmana_cost_total') || '0');
+  }
+  return cost;
+}
+
+function fmtEur(usdCost) {
+  return eurFormat.format(usdCost * USD_TO_EUR);
 }
 
 function updateCostDisplay() {
-  const today = new Date().toISOString().slice(0, 10);
-  const lastDay = localStorage.getItem('salmana_cost_day');
-  let todayCost = parseFloat(localStorage.getItem('salmana_cost_today') || '0');
-  if (lastDay !== today) {
-    todayCost = 0;
-    localStorage.setItem('salmana_cost_day', today);
-    localStorage.setItem('salmana_cost_today', '0');
-  }
-  const totalCost = parseFloat(localStorage.getItem('salmana_cost_total') || '0');
-  const el = document.getElementById('costDisplay');
-  if (el) el.innerHTML = `Heute <strong>$${todayCost.toFixed(2)}</strong> · Gesamt <strong>$${totalCost.toFixed(2)}</strong>`;
+  const range = localStorage.getItem('salmana_cost_range') || 'today';
+  const costEur = fmtEur(getCostForRange(range));
+  const label = document.getElementById('costLabel');
+  if (label) label.innerHTML = `${RANGE_LABELS[range]}: <strong>${costEur}</strong>`;
+
+  // Alle Menü-Beträge updaten (auch wenn geschlossen, damit beim Öffnen aktuell)
+  document.querySelectorAll('.cost-menu .menu-amount').forEach(el => {
+    el.textContent = fmtEur(getCostForRange(el.dataset.amount));
+  });
+  // Aktive Option markieren
+  document.querySelectorAll('.cost-menu button[data-range]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.range === range);
+  });
+}
+
+function toggleCostMenu(event) {
+  event?.stopPropagation();
+  updateCostDisplay(); // refresh amounts before opening
+  document.getElementById('costWrapper').classList.toggle('open');
+}
+
+function setCostRange(range) {
+  localStorage.setItem('salmana_cost_range', range);
+  document.getElementById('costWrapper').classList.remove('open');
+  updateCostDisplay();
 }
 
 function resetCost() {
-  if (!confirm('Kosten-Tracker zurücksetzen? Heutige und Gesamt-Werte werden auf $0.00 gesetzt.')) return;
-  localStorage.setItem('salmana_cost_today', '0');
+  if (!confirm('Alle Kosten-Daten löschen? Tages-, Monats- und Gesamt-Werte werden auf €0,00 zurückgesetzt.')) return;
+  localStorage.setItem('salmana_cost_daily', '{}');
   localStorage.setItem('salmana_cost_total', '0');
-  localStorage.setItem('salmana_cost_day', new Date().toISOString().slice(0, 10));
+  document.getElementById('costWrapper').classList.remove('open');
   updateCostDisplay();
 }
+
+// Menü schließen bei Klick außerhalb
+document.addEventListener('click', (e) => {
+  const w = document.getElementById('costWrapper');
+  if (w && !w.contains(e.target)) w.classList.remove('open');
+});
 
 // ─────────────────────────────────────────────
 //  MULTI-PROVIDER API KEY (Dropdown-basiert)
@@ -2473,6 +2620,7 @@ function copyAll() {
 
 // Auto-open API key modal if not set, otherwise show current model in header
 window.addEventListener('load', () => {
+  migrateCostStorage();
   updateHeaderModelLabel();
   updateCostDisplay();
   const hasClaude = !!localStorage.getItem('salmana_api_key');
