@@ -683,6 +683,151 @@
     font-weight: 700;
   }
 
+  /* WISSENSDATENBANK */
+  .kb-section {
+    background: var(--warm-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .kb-header {
+    padding: 18px 24px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .kb-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    font-weight: 600;
+  }
+  .kb-count {
+    font-size: 12px;
+    color: var(--mid);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 10px;
+  }
+  .kb-toggle {
+    font-size: 16px;
+    color: var(--mid);
+    font-weight: 400;
+    line-height: 1;
+  }
+  .kb-body {
+    padding: 0 24px 22px;
+    display: none;
+  }
+  .kb-body.open { display: block; }
+  .kb-intro {
+    font-size: 13px;
+    color: var(--mid);
+    margin-bottom: 14px;
+    line-height: 1.65;
+  }
+  .kb-upload {
+    border: 1.5px dashed var(--border);
+    border-radius: 4px;
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 14px;
+    background: var(--cream);
+  }
+  .kb-upload:hover, .kb-upload.dragover {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.04);
+  }
+  .kb-upload p { font-size: 12.5px; color: var(--mid); line-height: 1.6; }
+  .kb-upload strong { color: var(--gold-dark); font-weight: 600; }
+  .kb-upload .hint { font-size: 11.5px; color: var(--soft); margin-top: 4px; }
+
+  .kb-files { display: flex; flex-direction: column; gap: 6px; }
+  .kb-file-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    background: var(--cream);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    font-size: 12.5px;
+  }
+  .kb-file-row.disabled { opacity: 0.55; }
+  .kb-file-checkbox {
+    width: 15px; height: 15px; cursor: pointer;
+    accent-color: var(--gold-dark);
+  }
+  .kb-file-name {
+    flex: 1;
+    color: var(--dark);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .kb-file-name:hover { color: var(--gold-dark); text-decoration: underline; }
+  .kb-file-meta {
+    color: var(--soft);
+    font-size: 10.5px;
+    font-weight: 400;
+    margin-left: 6px;
+  }
+  .kb-file-category {
+    font-size: 11.5px;
+    padding: 5px 26px 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--warm-white);
+    color: var(--mid);
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3e%3cpath fill='%239A7A32' d='M5 6L0 0h10z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    margin: 0;
+    min-width: 130px;
+  }
+  .kb-file-remove {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--soft);
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 6px;
+    font-weight: 300;
+  }
+  .kb-file-remove:hover { color: var(--error); }
+
+  .kb-summary {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: rgba(201,168,76,0.05);
+    border-left: 2px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+    font-size: 11.5px;
+    color: var(--mid);
+    line-height: 1.5;
+  }
+  .kb-summary strong { color: var(--dark); font-weight: 600; }
+  .kb-empty {
+    font-size: 12px;
+    color: var(--soft);
+    text-align: center;
+    padding: 14px;
+    font-style: italic;
+  }
+
   /* INFO / HINT HELPERS */
   .info-box {
     border: 1px solid var(--border);
@@ -848,6 +993,29 @@
 <div class="main">
 
   <div id="statusMsg" class="status-msg"></div>
+
+  <!-- WISSENSDATENBANK -->
+  <div class="kb-section">
+    <div class="kb-header" onclick="toggleKb()">
+      <div>
+        <span class="kb-title">Wissensdatenbank</span>
+        <span class="kb-count" id="kbCount">(0 Dateien)</span>
+      </div>
+      <span class="kb-toggle" id="kbToggle">+</span>
+    </div>
+    <div class="kb-body" id="kbBody">
+      <p class="kb-intro">
+        Lade eigene Dokumente hoch — Positionierung, Einwände, Umfrage-Verbatims. Diese werden bei jeder Ad- und Caption-Generierung mitgeschickt und liefern echte Kundinnen-Sprache statt generischer AI-Formulierungen.
+      </p>
+      <div class="kb-upload" id="kbUpload" onclick="document.getElementById('kbFileInput').click()" ondragover="kbDragOver(event)" ondragleave="kbDragLeave(event)" ondrop="kbDropFile(event)">
+        <p><strong>Datei wählen</strong> oder hier ablegen</p>
+        <p class="hint">.txt · .md · .csv  ·  bis 100 KB pro Datei  ·  mehrere gleichzeitig möglich</p>
+      </div>
+      <input type="file" id="kbFileInput" multiple accept=".txt,.md,.csv,.text" style="display:none;" onchange="kbHandleUpload(event)" />
+      <div class="kb-files" id="kbFiles"></div>
+      <div class="kb-summary" id="kbSummary" style="display:none;"></div>
+    </div>
+  </div>
 
   <!-- SECTION 1: Was wird beworben -->
   <div class="section">
@@ -1461,6 +1629,202 @@ Kurz · Direkt · Warm · Mit Biss
 let fetchedPageContent = '';
 let fetchedPageUrl = '';
 let fetchTimer = null;
+
+// ─────────────────────────────────────────────
+//  WISSENSDATENBANK
+// ─────────────────────────────────────────────
+const KB_CATEGORIES = {
+  positionierung: 'Positionierung',
+  einwaende: 'Einwände',
+  verbatims: 'Zielgruppen-Verbatims',
+  sonstiges: 'Sonstiges'
+};
+const KB_MAX_SIZE = 100 * 1024; // 100 KB pro Datei
+
+function getKnowledgeBase() {
+  try { return JSON.parse(localStorage.getItem('salmana_knowledge_base') || '[]'); }
+  catch { return []; }
+}
+function saveKnowledgeBase(kb) {
+  localStorage.setItem('salmana_knowledge_base', JSON.stringify(kb));
+}
+
+function kbDetectCategory(filename) {
+  const n = filename.toLowerCase();
+  if (/einw|objekt/.test(n)) return 'einwaende';
+  if (/verbatim|umfra|survey|zita|zielgrupp|kunde/.test(n)) return 'verbatims';
+  if (/positio|brand|usp|wer.*wir|profil|about/.test(n)) return 'positionierung';
+  return 'sonstiges';
+}
+
+function kbHandleUpload(eventOrObj) {
+  const fileList = eventOrObj.target?.files || eventOrObj.dataTransfer?.files;
+  if (!fileList) return;
+  const files = [...fileList];
+  if (!files.length) return;
+
+  let added = 0, skipped = 0;
+  let pending = files.length;
+
+  files.forEach(file => {
+    if (file.size > KB_MAX_SIZE) {
+      skipped++;
+      pending--;
+      if (pending === 0) finish();
+      showStatus(`"${file.name}" zu groß (${(file.size/1024).toFixed(0)} KB). Maximum: 100 KB.`, 'error');
+      setTimeout(() => hideStatus(), 5000);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const kb = getKnowledgeBase();
+      kb.push({
+        id: Date.now().toString() + '-' + Math.random().toString(36).slice(2, 7),
+        name: file.name,
+        category: kbDetectCategory(file.name),
+        content: e.target.result,
+        size: file.size,
+        enabled: true,
+        uploadedAt: new Date().toISOString()
+      });
+      saveKnowledgeBase(kb);
+      added++;
+      pending--;
+      if (pending === 0) finish();
+    };
+    reader.onerror = () => {
+      skipped++;
+      pending--;
+      if (pending === 0) finish();
+    };
+    reader.readAsText(file);
+  });
+
+  function finish() {
+    renderKnowledgeBase();
+    if (added > 0) {
+      showStatus(`${added} Datei${added === 1 ? '' : 'en'} hinzugefügt.${skipped ? ' ' + skipped + ' übersprungen.' : ''}`, 'info');
+      setTimeout(() => hideStatus(), 3000);
+    }
+  }
+
+  if (eventOrObj.target?.files) eventOrObj.target.value = '';
+}
+
+function kbDragOver(e) { e.preventDefault(); document.getElementById('kbUpload').classList.add('dragover'); }
+function kbDragLeave(e) { document.getElementById('kbUpload').classList.remove('dragover'); }
+function kbDropFile(e) {
+  e.preventDefault();
+  document.getElementById('kbUpload').classList.remove('dragover');
+  kbHandleUpload({ dataTransfer: e.dataTransfer });
+}
+
+function kbToggleEnabled(id) {
+  const kb = getKnowledgeBase();
+  const item = kb.find(i => i.id === id);
+  if (item) item.enabled = !item.enabled;
+  saveKnowledgeBase(kb);
+  renderKnowledgeBase();
+}
+
+function kbChangeCategory(id, category) {
+  const kb = getKnowledgeBase();
+  const item = kb.find(i => i.id === id);
+  if (item) item.category = category;
+  saveKnowledgeBase(kb);
+  renderKnowledgeBase();
+}
+
+function kbRemove(id) {
+  const item = getKnowledgeBase().find(i => i.id === id);
+  if (!item) return;
+  if (!confirm(`Datei "${item.name}" wirklich entfernen?`)) return;
+  const kb = getKnowledgeBase().filter(i => i.id !== id);
+  saveKnowledgeBase(kb);
+  renderKnowledgeBase();
+}
+
+function kbPreview(id) {
+  const item = getKnowledgeBase().find(i => i.id === id);
+  if (!item) return;
+  const preview = item.content.slice(0, 1500);
+  const more = item.content.length > 1500 ? `\n\n… (${(item.content.length - 1500).toLocaleString('de-DE')} weitere Zeichen ausgeblendet)` : '';
+  alert(`${item.name}  ·  ${KB_CATEGORIES[item.category]}\n${'─'.repeat(40)}\n\n${preview}${more}`);
+}
+
+function renderKnowledgeBase() {
+  const kb = getKnowledgeBase();
+  const filesEl = document.getElementById('kbFiles');
+  const countEl = document.getElementById('kbCount');
+  const summaryEl = document.getElementById('kbSummary');
+  if (!filesEl || !countEl || !summaryEl) return;
+
+  const activeFiles = kb.filter(f => f.enabled);
+  const total = kb.length;
+  const active = activeFiles.length;
+  countEl.textContent = total === 0
+    ? '(noch keine Dateien)'
+    : (total === active
+        ? `(${active} aktiv)`
+        : `(${active} aktiv von ${total})`);
+
+  if (kb.length === 0) {
+    filesEl.innerHTML = '<div class="kb-empty">Noch keine Dateien hochgeladen.</div>';
+    summaryEl.style.display = 'none';
+    return;
+  }
+
+  filesEl.innerHTML = kb.map(f => `
+    <div class="kb-file-row ${f.enabled ? '' : 'disabled'}">
+      <input type="checkbox" class="kb-file-checkbox" ${f.enabled ? 'checked' : ''} onchange="kbToggleEnabled('${f.id}')" />
+      <span class="kb-file-name" onclick="kbPreview('${f.id}')" title="Klick für Vorschau">${escHtml(f.name)}<span class="kb-file-meta">${(f.size/1024).toFixed(1)} KB</span></span>
+      <select class="kb-file-category" onchange="kbChangeCategory('${f.id}', this.value)">
+        ${Object.entries(KB_CATEGORIES).map(([k, v]) => `<option value="${k}" ${f.category === k ? 'selected' : ''}>${v}</option>`).join('')}
+      </select>
+      <button class="kb-file-remove" onclick="kbRemove('${f.id}')" title="Entfernen">×</button>
+    </div>
+  `).join('');
+
+  const totalSize = activeFiles.reduce((sum, f) => sum + f.size, 0);
+  summaryEl.style.display = 'block';
+  summaryEl.innerHTML = active === 0
+    ? `Keine Datei aktiv — die Wissensdatenbank wird gerade nicht an die KI gesendet.`
+    : `<strong>${active} Datei${active === 1 ? '' : 'en'} aktiv</strong> · ${(totalSize/1024).toFixed(1)} KB werden bei jeder Generierung mitgeschickt.`;
+}
+
+function toggleKb() {
+  const body = document.getElementById('kbBody');
+  const toggle = document.getElementById('kbToggle');
+  const isOpen = body.classList.toggle('open');
+  toggle.textContent = isOpen ? '−' : '+';
+}
+
+function buildKnowledgeBaseSection() {
+  const kb = getKnowledgeBase().filter(f => f.enabled);
+  if (!kb.length) return '';
+
+  const groups = {};
+  kb.forEach(f => {
+    if (!groups[f.category]) groups[f.category] = [];
+    groups[f.category].push(f);
+  });
+
+  let out = `\n\n## REFERENZ-WISSEN — eigene Salmana-Dokumente
+Die folgenden Inhalte stammen aus eigenen Marketing-Dokumenten, Umfragen und Beratungsgesprächen.
+Nutze ECHTE Formulierungen, Bilder, Einwände und Wörter daraus als Inspiration für authentische Hooks und Bodies.
+Übernimm wörtliche Kunden-Zitate wo passend (aber keine Tippfehler kopieren).
+`;
+
+  ['positionierung', 'einwaende', 'verbatims', 'sonstiges'].forEach(cat => {
+    if (!groups[cat]) return;
+    out += `\n### ${KB_CATEGORIES[cat].toUpperCase()}\n`;
+    groups[cat].forEach(f => {
+      out += `\n[Quelle: ${f.name}]\n${f.content}\n`;
+    });
+  });
+
+  return out;
+}
 
 // ─────────────────────────────────────────────
 //  MODEL CATALOG (Preise in USD pro 1M Token, Stand 2026-05)
@@ -2082,7 +2446,7 @@ Markiere TYP mit ❄️.`;
   let prompt = `## AUFGABE
 
 Erstelle exakt ${hookCount} Facebook/Instagram Ad-Hooks, ${bodyCount} Body-Texte und ${ctaCount} Call-to-Actions für die Salmana Beauty Academy.
-
+${buildKnowledgeBaseSection()}
 ## WAS BEWORBEN WIRD
 ${desc ? desc : '→ Kein manueller Text. Extrahiere Angebot, Nutzen & Details SELBST aus dem Landingpage-Inhalt unten. Nutze Headline, Bullets, Preise, Zeitraum, USPs.'}
 
@@ -2555,6 +2919,7 @@ window.addEventListener('load', () => {
   migrateCostStorage();
   updateHeaderModelLabel();
   updateCostDisplay();
+  renderKnowledgeBase();
   const hasClaude = !!localStorage.getItem('salmana_api_key');
   const hasOpenAI = !!localStorage.getItem('salmana_openai_key');
   if (!hasClaude && !hasOpenAI) {
@@ -2843,7 +3208,7 @@ function buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtag
 
   let prompt = `## AUFGABE
 Erstelle ${anzahl} Facebook/Instagram-Caption(s) für die Salmana Beauty Academy.
-
+${buildKnowledgeBaseSection()}
 ## THEMA / ANLASS
 ${thema}
 ${url ? `\nLandingpage-URL: ${url}` : ''}
