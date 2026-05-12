@@ -4,34 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Salmana Beauty Academy – Facebook Ads Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --gold: #C9A84C;
     --gold-light: #E8D5A3;
     --gold-dark: #9A7A32;
     --cream: #FAF7F2;
-    --warm-white: #FFFDF9;
+    --warm-white: #FFFFFF;
     --dark: #1A1A1A;
-    --mid: #555;
-    --border: #E5DDD0;
+    --mid: #6B6B6B;
+    --soft: #9A9A9A;
+    --border: #ECE7DD;
+    --border-soft: #F2EFE8;
     --success: #4CAF50;
     --error: #E53935;
-    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.04);
+    --shadow-hover: 0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
 
   body {
-    font-family: 'Georgia', serif;
+    font-family: 'Montserrat', sans-serif;
     background: var(--cream);
     color: var(--dark);
     min-height: 100vh;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* HEADER */
   header {
     background: var(--dark);
-    padding: 24px 40px;
+    padding: 18px 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -45,48 +54,73 @@
     gap: 14px;
   }
   .header-logo {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 700;
     color: var(--dark);
     letter-spacing: 0.5px;
   }
   .header-title {
     color: var(--warm-white);
-    font-size: 16px;
-    letter-spacing: 0.5px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
   }
   .header-subtitle {
-    color: var(--gold-light);
-    font-size: 11px;
-    letter-spacing: 1.5px;
+    color: rgba(232,213,163,0.7);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     margin-top: 2px;
   }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cost-display {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(232,213,163,0.9);
+    padding: 7px 14px;
+    border: 1px solid rgba(232,213,163,0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .cost-display:hover {
+    background: rgba(232,213,163,0.08);
+    border-color: rgba(232,213,163,0.5);
+  }
+  .cost-display strong { color: var(--gold); font-weight: 700; }
   .api-key-btn {
     background: transparent;
-    border: 1px solid var(--gold);
+    border: 1px solid rgba(201,168,76,0.5);
     color: var(--gold);
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 7px 16px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 12px;
-    letter-spacing: 0.5px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
     transition: all 0.2s;
   }
-  .api-key-btn:hover { background: var(--gold); color: var(--dark); }
+  .api-key-btn:hover { background: var(--gold); color: var(--dark); border-color: var(--gold); }
 
   /* MAIN LAYOUT */
   .main {
-    max-width: 960px;
+    max-width: 880px;
     margin: 0 auto;
-    padding: 40px 24px 80px;
+    padding: 48px 24px 100px;
   }
 
   /* API KEY MODAL */
@@ -94,7 +128,8 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
     z-index: 200;
     align-items: center;
     justify-content: center;
@@ -102,179 +137,152 @@
   .api-modal.open { display: flex; }
   .api-modal-box {
     background: var(--warm-white);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 36px;
-    max-width: 480px;
+    max-width: 520px;
     width: 90%;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.18);
   }
-  .api-modal-box h3 { font-size: 20px; margin-bottom: 8px; }
-  .api-modal-box p { color: var(--mid); font-size: 14px; margin-bottom: 20px; line-height: 1.6; font-family: sans-serif; }
-  .api-modal-box a { color: var(--gold-dark); }
+  .api-modal-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.2px; }
+  .api-modal-box p { color: var(--mid); font-size: 13px; margin-bottom: 24px; line-height: 1.6; }
+  .api-modal-box a { color: var(--gold-dark); text-decoration: none; font-weight: 500; }
+  .api-modal-box a:hover { text-decoration: underline; }
 
   /* FORM SECTIONS */
   .section {
     background: var(--warm-white);
-    border-radius: 16px;
-    padding: 32px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 30px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border-soft);
   }
   .section-title {
-    font-size: 13px;
-    letter-spacing: 1.5px;
+    font-size: 11px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--gold-dark);
-    margin-bottom: 20px;
-    font-family: sans-serif;
+    margin-bottom: 22px;
     font-weight: 600;
   }
 
   label {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--mid);
-    margin-bottom: 6px;
-    font-family: sans-serif;
+    margin-bottom: 8px;
+    font-weight: 400;
   }
-  label strong { color: var(--dark); }
+  label strong { color: var(--dark); font-weight: 600; }
 
   input[type="text"],
   input[type="url"],
   input[type="password"],
+  input[type="number"],
   textarea,
   select {
     width: 100%;
-    padding: 12px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    font-size: 14px;
-    font-family: sans-serif;
-    background: var(--cream);
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-family: 'Montserrat', sans-serif;
+    background: var(--warm-white);
     color: var(--dark);
-    transition: border-color 0.2s;
+    transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    font-weight: 400;
   }
   input:focus, textarea:focus, select:focus {
     border-color: var(--gold);
-    background: var(--warm-white);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
   }
-  textarea { resize: vertical; line-height: 1.6; }
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3e%3cpath fill='%239A7A32' d='M6 8L0 0h12z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  textarea { resize: vertical; line-height: 1.65; }
 
   .row-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  /* SLIDER */
-  .slider-wrapper { margin-bottom: 16px; }
-  .slider-label-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  .slider-value {
-    background: var(--gold);
-    color: var(--dark);
-    font-weight: bold;
-    padding: 3px 12px;
-    border-radius: 20px;
-    font-size: 15px;
-    font-family: sans-serif;
-  }
-  input[type="range"] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--border);
-    outline: none;
-    margin-bottom: 0;
-    border: none;
-    padding: 0;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--gold);
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    gap: 14px;
   }
 
   /* CHIP SELECTORS */
   .chip-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 16px;
   }
   .chip {
-    padding: 8px 18px;
-    border-radius: 30px;
-    border: 1.5px solid var(--border);
-    background: var(--cream);
+    padding: 7px 16px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    background: var(--warm-white);
     cursor: pointer;
-    font-size: 13px;
-    font-family: sans-serif;
-    transition: all 0.2s;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--mid);
+    transition: all 0.15s;
     user-select: none;
   }
-  .chip:hover { border-color: var(--gold); }
+  .chip:hover { border-color: var(--gold-light); color: var(--dark); }
   .chip.active {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: var(--dark);
+    background: var(--dark);
+    border-color: var(--dark);
+    color: var(--warm-white);
     font-weight: 600;
   }
 
   /* FILE UPLOAD / PASTE AREA */
   .drop-area {
-    border: 2px dashed var(--border);
+    border: 1.5px dashed var(--border);
     border-radius: 12px;
-    padding: 24px;
+    padding: 22px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     margin-bottom: 12px;
+    background: var(--cream);
   }
   .drop-area:hover, .drop-area.drag-over {
     border-color: var(--gold);
-    background: rgba(201,168,76,0.05);
+    background: rgba(201,168,76,0.04);
   }
-  .drop-area p { color: var(--mid); font-size: 13px; font-family: sans-serif; line-height: 1.6; }
-  .drop-area strong { color: var(--gold-dark); }
+  .drop-area p { color: var(--mid); font-size: 12.5px; line-height: 1.6; }
+  .drop-area strong { color: var(--gold-dark); font-weight: 600; }
   #hookFileInput { display: none; }
 
   /* GENERATE BUTTON */
   .generate-btn {
     width: 100%;
-    padding: 18px;
+    padding: 16px;
     background: var(--dark);
     color: var(--warm-white);
     border: none;
-    border-radius: 14px;
-    font-size: 16px;
-    letter-spacing: 0.5px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    font-family: sans-serif;
-    font-weight: 600;
   }
-  .generate-btn:hover { background: #333; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
-  .generate-btn:disabled { background: #aaa; transform: none; box-shadow: none; cursor: not-allowed; }
+  .generate-btn:hover { background: #2a2a2a; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+  .generate-btn:disabled { background: #b8b8b8; transform: none; box-shadow: none; cursor: not-allowed; }
   .generate-btn .spinner {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border: 2px solid rgba(255,255,255,0.3);
     border-top-color: white;
     border-radius: 50%;
@@ -282,134 +290,139 @@
     display: none;
   }
   .generate-btn.loading .spinner { display: block; }
+  .generate-btn.secondary {
+    background: transparent;
+    color: var(--mid);
+    border: 1px solid var(--border);
+  }
+  .generate-btn.secondary:hover { background: var(--cream); color: var(--dark); border-color: var(--mid); transform: none; box-shadow: none; }
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* OUTPUT AREA */
-  #output { margin-top: 32px; }
+  #output { margin-top: 36px; }
   .output-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
   }
-  .output-header h2 { font-size: 22px; }
+  .output-header h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
   .copy-all-btn {
-    background: var(--gold);
+    background: var(--dark);
+    color: var(--warm-white);
     border: none;
-    padding: 10px 20px;
+    padding: 9px 18px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 13px;
-    font-family: sans-serif;
+    font-size: 12px;
     font-weight: 600;
-    transition: all 0.2s;
+    transition: all 0.15s;
   }
-  .copy-all-btn:hover { background: var(--gold-dark); color: white; }
+  .copy-all-btn:hover { background: var(--gold); color: var(--dark); }
 
   /* HOOK CARDS */
   .hooks-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 14px;
     margin-bottom: 32px;
   }
   @media (max-width: 600px) { .hooks-grid { grid-template-columns: 1fr; } .row-2 { grid-template-columns: 1fr; } }
 
   .hook-card {
     background: var(--warm-white);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
     padding: 20px;
     position: relative;
-    transition: all 0.2s;
-    box-shadow: var(--shadow);
+    transition: all 0.15s;
   }
-  .hook-card:hover { border-color: var(--gold-light); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+  .hook-card:hover { border-color: var(--gold-light); transform: translateY(-1px); box-shadow: var(--shadow-hover); }
   .hook-number {
-    font-size: 11px;
-    letter-spacing: 1.5px;
+    font-size: 10px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     color: var(--gold-dark);
-    font-family: sans-serif;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-weight: 600;
   }
   .hook-text {
-    font-size: 15px;
-    line-height: 1.7;
+    font-size: 14.5px;
+    line-height: 1.65;
     color: var(--dark);
+    font-weight: 400;
   }
   .hook-type {
     display: inline-block;
     background: var(--cream);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-soft);
     border-radius: 20px;
     padding: 3px 10px;
-    font-size: 11px;
-    font-family: sans-serif;
+    font-size: 10.5px;
+    font-weight: 500;
     color: var(--mid);
-    margin-top: 12px;
-    margin-bottom: 8px;
+    margin-top: 14px;
   }
   .card-copy-btn {
     position: absolute;
     top: 14px;
     right: 14px;
     background: var(--cream);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-soft);
     border-radius: 6px;
     padding: 5px 10px;
     font-size: 11px;
-    font-family: sans-serif;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     color: var(--mid);
   }
-  .card-copy-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+  .card-copy-btn:hover { background: var(--dark); border-color: var(--dark); color: var(--warm-white); }
   .card-copy-btn.copied { background: var(--success); border-color: var(--success); color: white; }
 
   /* FULL ADS */
   .full-ads-section h3 {
-    font-size: 18px;
-    margin-bottom: 16px;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 18px;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-soft);
+    letter-spacing: -0.2px;
   }
   .ad-card {
     background: var(--warm-white);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 28px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 26px;
+    margin-bottom: 16px;
     position: relative;
+    transition: all 0.15s;
   }
+  .ad-card:hover { border-color: var(--gold-light); }
   .ad-card-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     gap: 16px;
   }
-  .ad-card-title { font-size: 16px; font-weight: bold; }
+  .ad-card-title { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
   .ad-framework-tag {
-    background: var(--gold-light);
+    background: rgba(201,168,76,0.12);
     border-radius: 20px;
     padding: 4px 12px;
-    font-size: 11px;
-    font-family: sans-serif;
+    font-size: 10.5px;
     font-weight: 600;
     color: var(--gold-dark);
     white-space: nowrap;
     flex-shrink: 0;
   }
   .ad-section-label {
-    font-size: 11px;
-    letter-spacing: 1.5px;
+    font-size: 10px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     color: var(--gold-dark);
-    font-family: sans-serif;
     font-weight: 600;
     margin-bottom: 6px;
     margin-top: 16px;
@@ -417,48 +430,48 @@
   .ad-section-label:first-of-type { margin-top: 0; }
   .ad-content {
     font-size: 14px;
-    line-height: 1.8;
+    line-height: 1.75;
     color: var(--dark);
     white-space: pre-wrap;
+    font-weight: 400;
   }
   .ad-note {
-    margin-top: 16px;
-    padding: 12px 16px;
-    background: rgba(201,168,76,0.08);
-    border-left: 3px solid var(--gold);
+    margin-top: 14px;
+    padding: 11px 14px;
+    background: rgba(201,168,76,0.06);
+    border-left: 2px solid var(--gold);
     border-radius: 0 8px 8px 0;
-    font-size: 12px;
-    font-family: sans-serif;
+    font-size: 11.5px;
     color: var(--mid);
     line-height: 1.6;
   }
   .ad-copy-row {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     margin-top: 16px;
   }
   .copy-part-btn {
-    padding: 8px 16px;
+    padding: 7px 14px;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--cream);
+    border-radius: 7px;
+    background: var(--warm-white);
     cursor: pointer;
-    font-size: 12px;
-    font-family: sans-serif;
-    transition: all 0.2s;
+    font-size: 11.5px;
+    font-weight: 500;
+    transition: all 0.15s;
     color: var(--mid);
   }
-  .copy-part-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--dark); font-weight: 600; }
+  .copy-part-btn:hover { background: var(--dark); border-color: var(--dark); color: var(--warm-white); }
   .copy-part-btn.copied { background: var(--success); border-color: var(--success); color: white; }
 
   /* ERROR / STATUS */
   .status-msg {
-    padding: 14px 20px;
-    border-radius: 10px;
-    font-family: sans-serif;
-    font-size: 14px;
+    padding: 13px 18px;
+    border-radius: 9px;
+    font-size: 13px;
     margin-bottom: 16px;
     display: none;
+    font-weight: 500;
   }
   .status-msg.error { background: #FDE8E8; border: 1px solid #F5C6C6; color: #C62828; display: block; }
   .status-msg.info { background: rgba(201,168,76,0.1); border: 1px solid var(--gold-light); color: var(--gold-dark); display: block; }
@@ -466,12 +479,12 @@
 
   /* LANDING PAGE STATUS */
   .url-status {
-    font-size: 12px;
-    font-family: sans-serif;
-    margin-top: -10px;
+    font-size: 11.5px;
+    font-weight: 500;
+    margin-top: -8px;
     margin-bottom: 16px;
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: 7px;
     display: none;
   }
   .url-status.fetching { background: rgba(201,168,76,0.1); color: var(--gold-dark); display: block; }
@@ -496,77 +509,66 @@
     margin: 24px 0;
   }
 
-  /* MODEL CARDS */
-  .model-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
-  .model-card {
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    cursor: pointer;
-    transition: all 0.2s;
+  /* MODEL ROW (in modal) */
+  .model-info {
+    margin-top: 6px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
     background: var(--cream);
+    border-radius: 8px;
+    font-size: 11.5px;
+    color: var(--mid);
+    line-height: 1.5;
   }
-  .model-card:hover { border-color: var(--gold-light); background: var(--warm-white); }
-  .model-card.active { border-color: var(--gold); background: rgba(201,168,76,0.07); }
-  .model-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .model-name { font-family: sans-serif; font-weight: 700; font-size: 14px; color: var(--dark); }
-  .model-badge {
-    font-size: 11px; font-family: sans-serif; font-weight: 600;
-    padding: 3px 10px; border-radius: 20px;
-  }
-  .model-badge.recommended { background: rgba(201,168,76,0.2); color: var(--gold-dark); }
-  .model-badge.premium { background: #F3E5F5; color: #6A1B9A; }
-  .model-badge.fast { background: #E3F2FD; color: #1565C0; }
-  .model-desc { font-family: sans-serif; font-size: 12px; color: var(--mid); line-height: 1.5; }
+  .model-info strong { color: var(--gold-dark); font-weight: 600; }
 
   /* Active model indicator in header */
   .model-indicator {
-    font-size: 11px; font-family: sans-serif;
-    color: var(--gold-light); margin-left: 12px;
-    opacity: 0.8;
+    font-size: 11px;
+    color: rgba(232,213,163,0.8);
+    margin-left: 10px;
+    font-weight: 500;
   }
 
   /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--cream); }
-  ::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-light); }
 
   /* SECTION DIVIDER */
   .section-divider {
     display: flex;
     align-items: center;
     gap: 16px;
-    margin: 56px 0 32px;
+    margin: 60px 0 28px;
   }
   .section-divider::before,
   .section-divider::after {
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--border);
+    background: var(--border-soft);
   }
   .section-divider span {
-    font-family: sans-serif;
-    font-size: 11px;
+    font-size: 10.5px;
+    font-weight: 600;
     letter-spacing: 2.5px;
-    color: var(--mid);
+    color: var(--soft);
     text-transform: uppercase;
     white-space: nowrap;
-    padding: 4px 16px;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    background: var(--cream);
+    padding: 4px 14px;
   }
 
   /* CAPTION CARDS */
   .caption-card {
     background: var(--warm-white);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 16px;
     position: relative;
+    transition: all 0.15s;
   }
   .caption-card:hover { border-color: var(--gold-light); }
   .caption-card-header {
@@ -576,33 +578,57 @@
     margin-bottom: 16px;
     gap: 12px;
   }
-  .caption-card-title { font-size: 15px; font-weight: bold; font-family: sans-serif; }
-  .caption-meta-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .caption-card-title { font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px; }
+  .caption-meta-row { display: flex; gap: 6px; flex-wrap: wrap; }
   .caption-tag {
-    font-size: 11px;
-    font-family: sans-serif;
+    font-size: 10.5px;
+    font-weight: 500;
     padding: 3px 10px;
     border-radius: 20px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-soft);
     color: var(--mid);
     background: var(--cream);
   }
   .caption-text {
-    font-size: 15px;
-    line-height: 1.9;
+    font-size: 14.5px;
+    line-height: 1.85;
     color: var(--dark);
     white-space: pre-wrap;
-    font-family: sans-serif;
+    font-weight: 400;
   }
   .caption-preview-note {
-    margin-top: 16px;
-    padding: 10px 14px;
-    background: rgba(201,168,76,0.07);
-    border-left: 3px solid var(--gold);
+    margin-top: 14px;
+    padding: 9px 13px;
+    background: rgba(201,168,76,0.06);
+    border-left: 2px solid var(--gold);
     border-radius: 0 8px 8px 0;
-    font-size: 11px;
-    font-family: sans-serif;
+    font-size: 10.5px;
+    font-weight: 500;
     color: var(--gold-dark);
+  }
+
+  /* LOADING SKELETON (in case it was used) */
+  .skeleton-block {
+    background: linear-gradient(90deg, var(--border-soft) 25%, var(--cream) 50%, var(--border-soft) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+    height: 70px;
+    margin-bottom: 14px;
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border-soft);
+    margin: 22px 0;
+  }
+
+  /* HOOK COUNT INPUT */
+  input[type="number"] {
+    text-align: center;
+    font-weight: 700;
   }
 </style>
 </head>
@@ -617,72 +643,56 @@
       <div class="header-subtitle">Facebook Ads Generator <span class="model-indicator" id="headerModelLabel"></span></div>
     </div>
   </div>
-  <button class="api-key-btn" onclick="openApiModal()">⚙ API-Key</button>
+  <div class="header-actions">
+    <div class="cost-display" id="costDisplay" onclick="resetCost()" title="Klick zum Zurücksetzen">💰 Heute <strong>$0.00</strong> · Gesamt <strong>$0.00</strong></div>
+    <button class="api-key-btn" onclick="openApiModal()">⚙ Einstellungen</button>
+  </div>
 </header>
 
 <!-- API KEY MODAL -->
 <div class="api-modal" id="apiModal">
-  <div class="api-modal-box" style="max-width:560px; width:100%;">
-    <h3>KI &amp; API-Keys einrichten</h3>
-    <p style="margin-bottom:16px;">Richte eine oder beide KIs ein. Danach kannst du auf der Hauptseite wechseln.</p>
+  <div class="api-modal-box">
+    <h3>Einstellungen</h3>
+    <p>Wähle Provider und Modell. API-Keys werden nur lokal in deinem Browser gespeichert.</p>
 
-    <!-- Provider Tabs -->
-    <div style="display:flex; gap:0; margin-bottom:20px; border:1.5px solid var(--border); border-radius:10px; overflow:hidden;">
-      <button id="tabClaude" onclick="switchProviderTab('claude')" style="flex:1; padding:12px; font-family:sans-serif; font-size:14px; font-weight:600; border:none; cursor:pointer; background:var(--gold); color:#fff; transition:all .2s;">&#x1F9E0; Claude (Anthropic)</button>
-      <button id="tabOpenai" onclick="switchProviderTab('openai')" style="flex:1; padding:12px; font-family:sans-serif; font-size:14px; font-weight:600; border:none; cursor:pointer; background:var(--cream); color:var(--dark); border-left:1.5px solid var(--border); transition:all .2s;">&#x1F916; ChatGPT (OpenAI)</button>
-    </div>
+    <label><strong>KI-Provider</strong></label>
+    <select id="providerSelect" onchange="onProviderChange()">
+      <option value="claude">🧠 Claude (Anthropic)</option>
+      <option value="openai">🤖 ChatGPT (OpenAI)</option>
+    </select>
 
-    <!-- Claude Tab -->
-    <div id="claudeTab">
-      <p style="margin-bottom:12px;">API-Key von <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> &#x2013; wird nur lokal gespeichert.</p>
-      <label><strong>Anthropic API-Key</strong></label>
+    <!-- Claude Block -->
+    <div id="claudeBlock">
+      <label><strong>Claude-Modell</strong></label>
+      <select id="claudeModelSelect" onchange="updateClaudeModelInfo()">
+        <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — Empfohlen</option>
+        <option value="claude-opus-4-7">Claude Opus 4.7 — Premium</option>
+        <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 — Schnell &amp; günstig</option>
+      </select>
+      <div class="model-info" id="claudeModelInfo"></div>
+
+      <label><strong>Anthropic API-Key</strong> <span style="font-size:11px; color:var(--soft); font-weight:400;">→ <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></span></label>
       <input type="password" id="apiKeyInput" placeholder="sk-ant-..." />
-      <label style="margin-top:16px;"><strong>Modell</strong></label>
-      <div class="model-cards" id="claudeModelCards">
-        <div class="model-card active" data-model="claude-sonnet-4-6" onclick="selectClaudeModel(this)">
-          <div class="model-card-header"><span class="model-name">Sonnet 4.6</span><span class="model-badge recommended">&#x2B50; Empfohlen</span></div>
-          <div class="model-desc">Bestes Preis-Leistungs-Verhältnis. Kreatives Copywriting auf Agentur-Niveau, ideal für starke Hooks.</div>
-        </div>
-        <div class="model-card" data-model="claude-opus-4-6" onclick="selectClaudeModel(this)">
-          <div class="model-card-header"><span class="model-name">Opus 4.6</span><span class="model-badge premium">&#x1F3C6; Premium</span></div>
-          <div class="model-desc">Maximale Qualität für wichtige Kampagnen. Tieferes Denken, nuanciertere Texte.</div>
-        </div>
-        <div class="model-card" data-model="claude-haiku-4-5-20251001" onclick="selectClaudeModel(this)">
-          <div class="model-card-header"><span class="model-name">Haiku 4.5</span><span class="model-badge fast">&#x26A1; Schnell</span></div>
-          <div class="model-desc">Sehr schnell und günstig &#x2013; gut für Brainstorming und erste Ideen.</div>
-        </div>
-      </div>
     </div>
 
-    <!-- OpenAI Tab -->
-    <div id="openaiTab" style="display:none;">
-      <p style="margin-bottom:12px;">API-Key von <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a> &#x2013; wird nur lokal gespeichert.</p>
-      <label><strong>OpenAI API-Key</strong></label>
+    <!-- OpenAI Block -->
+    <div id="openaiBlock" style="display:none;">
+      <label><strong>OpenAI-Modell</strong></label>
+      <select id="openaiModelSelect" onchange="updateOpenaiModelInfo()">
+        <option value="gpt-5">GPT-5 — Empfohlen</option>
+        <option value="gpt-5-mini">GPT-5 mini — Schnell &amp; günstig</option>
+        <option value="gpt-4o">GPT-4o</option>
+        <option value="gpt-4o-mini">GPT-4o mini — Sehr günstig</option>
+      </select>
+      <div class="model-info" id="openaiModelInfo"></div>
+
+      <label><strong>OpenAI API-Key</strong> <span style="font-size:11px; color:var(--soft); font-weight:400;">→ <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></span></label>
       <input type="password" id="openaiKeyInput" placeholder="sk-..." />
-      <label style="margin-top:16px;"><strong>Modell</strong></label>
-      <div class="model-cards" id="openaiModelCards">
-        <div class="model-card" data-model="gpt-5" onclick="selectOpenaiModel(this)">
-          <div class="model-card-header"><span class="model-name">GPT-5</span><span class="model-badge" style="background:#7c3aed;color:#fff;">&#x1F52E; Neuestes</span></div>
-          <div class="model-desc">Aktuellstes Flaggschiff-Modell von OpenAI. Stärkste Reasoning-Fähigkeiten und bestes Copywriting.</div>
-        </div>
-        <div class="model-card active" data-model="gpt-4o" onclick="selectOpenaiModel(this)">
-          <div class="model-card-header"><span class="model-name">GPT-4o</span><span class="model-badge recommended">&#x2B50; Empfohlen</span></div>
-          <div class="model-desc">Flagship-Modell von OpenAI. Sehr starkes Copywriting, versteht Kontext und Emotionen.</div>
-        </div>
-        <div class="model-card" data-model="gpt-4o-mini" onclick="selectOpenaiModel(this)">
-          <div class="model-card-header"><span class="model-name">GPT-4o mini</span><span class="model-badge fast">&#x26A1; Schnell &amp; günstig</span></div>
-          <div class="model-desc">Sehr schnell und kostengünstig &#x2013; gut für erste Entwürfe und Brainstorming.</div>
-        </div>
-        <div class="model-card" data-model="gpt-4-turbo" onclick="selectOpenaiModel(this)">
-          <div class="model-card-header"><span class="model-name">GPT-4 Turbo</span><span class="model-badge premium">&#x1F3C6; Stärker</span></div>
-          <div class="model-desc">Älteres Flaggschiff mit großem Kontextfenster &#x2013; für komplexe, lange Prompts.</div>
-        </div>
-      </div>
     </div>
 
-    <div style="display:flex; gap:12px; margin-top:20px;">
-      <button class="generate-btn" style="flex:1; padding:13px;" onclick="saveApiKey()">Speichern</button>
-      <button onclick="closeApiModal()" style="flex:1; padding:13px; background:transparent; border:1.5px solid var(--border); border-radius:10px; cursor:pointer; font-family:sans-serif; font-size:14px;">Abbrechen</button>
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <button class="generate-btn" style="flex:1; padding:13px; font-size:13px;" onclick="saveApiKey()">Speichern</button>
+      <button class="generate-btn secondary" style="flex:1; padding:13px; font-size:13px;" onclick="closeApiModal()">Schließen</button>
     </div>
   </div>
 </div>
@@ -1375,53 +1385,122 @@ let fetchedPageUrl = '';
 let fetchTimer = null;
 
 // ─────────────────────────────────────────────
-//  MULTI-PROVIDER API KEY
+//  MODEL CATALOG (Preise in USD pro 1M Token, Stand 2026-05)
+// ─────────────────────────────────────────────
+const MODEL_CATALOG = {
+  'claude-opus-4-7':            { label: '🧠 Opus 4.7',      input: 5,    output: 25,  desc: 'Premium · maximale Qualität, tieferes Reasoning' },
+  'claude-opus-4-6':            { label: '🧠 Opus 4.6',      input: 5,    output: 25,  desc: 'Premium-Vorgänger (Legacy)' },
+  'claude-sonnet-4-6':          { label: '🧠 Sonnet 4.6',    input: 3,    output: 15,  desc: 'Empfohlen · bestes Preis-Leistungs-Verhältnis für Copywriting' },
+  'claude-haiku-4-5-20251001':  { label: '🧠 Haiku 4.5',     input: 1,    output: 5,   desc: 'Schnell &amp; günstig · gut für Brainstorming' },
+  'gpt-5':                      { label: '🤖 GPT-5',         input: 1.25, output: 10,  desc: 'OpenAI Flaggschiff · starkes Reasoning' },
+  'gpt-5-mini':                 { label: '🤖 GPT-5 mini',    input: 0.25, output: 2,   desc: 'Schnell &amp; günstig · gute Qualität' },
+  'gpt-4o':                     { label: '🤖 GPT-4o',        input: 2.50, output: 10,  desc: 'Vorheriges Flaggschiff · solides Copywriting' },
+  'gpt-4o-mini':                { label: '🤖 GPT-4o mini',   input: 0.15, output: 0.60, desc: 'Sehr günstig · für erste Entwürfe' },
+  'gpt-4-turbo':                { label: '🤖 GPT-4 Turbo',   input: 10,   output: 30,  desc: 'Altes Flaggschiff (Legacy)' }
+};
+
+function fmtPrice(p) {
+  return p < 1 ? `$${p.toFixed(2)}` : `$${p % 1 === 0 ? p : p.toFixed(2)}`;
+}
+
+// ─────────────────────────────────────────────
+//  COST TRACKING
+// ─────────────────────────────────────────────
+function trackCost(model, inputTokens, outputTokens) {
+  const m = MODEL_CATALOG[model];
+  if (!m) return;
+  const cost = (inputTokens * m.input + outputTokens * m.output) / 1_000_000;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDay = localStorage.getItem('salmana_cost_day');
+  let todayCost = parseFloat(localStorage.getItem('salmana_cost_today') || '0');
+  if (lastDay !== today) {
+    todayCost = 0;
+    localStorage.setItem('salmana_cost_day', today);
+  }
+  todayCost += cost;
+  const totalCost = parseFloat(localStorage.getItem('salmana_cost_total') || '0') + cost;
+
+  localStorage.setItem('salmana_cost_today', todayCost.toString());
+  localStorage.setItem('salmana_cost_total', totalCost.toString());
+  updateCostDisplay();
+}
+
+function updateCostDisplay() {
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDay = localStorage.getItem('salmana_cost_day');
+  let todayCost = parseFloat(localStorage.getItem('salmana_cost_today') || '0');
+  if (lastDay !== today) {
+    todayCost = 0;
+    localStorage.setItem('salmana_cost_day', today);
+    localStorage.setItem('salmana_cost_today', '0');
+  }
+  const totalCost = parseFloat(localStorage.getItem('salmana_cost_total') || '0');
+  const el = document.getElementById('costDisplay');
+  if (el) el.innerHTML = `💰 Heute <strong>$${todayCost.toFixed(2)}</strong> · Gesamt <strong>$${totalCost.toFixed(2)}</strong>`;
+}
+
+function resetCost() {
+  if (!confirm('Kosten-Tracker zurücksetzen? Heutige und Gesamt-Werte werden auf $0.00 gesetzt.')) return;
+  localStorage.setItem('salmana_cost_today', '0');
+  localStorage.setItem('salmana_cost_total', '0');
+  localStorage.setItem('salmana_cost_day', new Date().toISOString().slice(0, 10));
+  updateCostDisplay();
+}
+
+// ─────────────────────────────────────────────
+//  MULTI-PROVIDER API KEY (Dropdown-basiert)
 // ─────────────────────────────────────────────
 
 function getActiveProvider() {
   return localStorage.getItem('salmana_provider') || 'claude';
 }
 
-function switchProviderTab(provider) {
+function onProviderChange() {
+  const provider = document.getElementById('providerSelect').value;
   localStorage.setItem('salmana_provider', provider);
-  const isClaude = provider === 'claude';
-  document.getElementById('claudeTab').style.display = isClaude ? 'block' : 'none';
-  document.getElementById('openaiTab').style.display = isClaude ? 'none' : 'block';
-  document.getElementById('tabClaude').style.background = isClaude ? 'var(--gold)' : 'var(--cream)';
-  document.getElementById('tabClaude').style.color = isClaude ? '#fff' : 'var(--dark)';
-  document.getElementById('tabOpenai').style.background = isClaude ? 'var(--cream)' : 'var(--gold)';
-  document.getElementById('tabOpenai').style.color = isClaude ? 'var(--dark)' : '#fff';
+  document.getElementById('claudeBlock').style.display = provider === 'claude' ? 'block' : 'none';
+  document.getElementById('openaiBlock').style.display = provider === 'openai' ? 'block' : 'none';
 }
 
-function selectClaudeModel(card) {
-  document.querySelectorAll('#claudeModelCards .model-card').forEach(c => c.classList.remove('active'));
-  card.classList.add('active');
+function renderModelInfo(elId, model) {
+  const m = MODEL_CATALOG[model];
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!m) { el.innerHTML = ''; return; }
+  el.innerHTML = `<strong>${fmtPrice(m.input)}</strong> Input · <strong>${fmtPrice(m.output)}</strong> Output <span style="color:var(--soft);">pro 1M Token</span><br>${m.desc}`;
 }
 
-function selectOpenaiModel(card) {
-  document.querySelectorAll('#openaiModelCards .model-card').forEach(c => c.classList.remove('active'));
-  card.classList.add('active');
+function updateClaudeModelInfo() {
+  renderModelInfo('claudeModelInfo', document.getElementById('claudeModelSelect').value);
+}
+
+function updateOpenaiModelInfo() {
+  renderModelInfo('openaiModelInfo', document.getElementById('openaiModelSelect').value);
 }
 
 function openApiModal() {
-  // Restore keys
   document.getElementById('apiKeyInput').value = localStorage.getItem('salmana_api_key') || '';
   document.getElementById('openaiKeyInput').value = localStorage.getItem('salmana_openai_key') || '';
 
-  // Restore Claude model
-  const savedModel = localStorage.getItem('salmana_model') || 'claude-sonnet-4-6';
-  document.querySelectorAll('#claudeModelCards .model-card').forEach(c => {
-    c.classList.toggle('active', c.dataset.model === savedModel);
-  });
+  // Legacy-Migration: alte Modelle auf aktuelle umstellen
+  let savedClaude = localStorage.getItem('salmana_model') || 'claude-sonnet-4-6';
+  if (savedClaude === 'claude-opus-4-6') savedClaude = 'claude-opus-4-7';
+  let savedOpenai = localStorage.getItem('salmana_openai_model') || 'gpt-5';
+  if (savedOpenai === 'gpt-4-turbo') savedOpenai = 'gpt-4o';
 
-  // Restore OpenAI model
-  const savedOaiModel = localStorage.getItem('salmana_openai_model') || 'gpt-4o';
-  document.querySelectorAll('#openaiModelCards .model-card').forEach(c => {
-    c.classList.toggle('active', c.dataset.model === savedOaiModel);
-  });
+  const claudeSel = document.getElementById('claudeModelSelect');
+  const openaiSel = document.getElementById('openaiModelSelect');
+  // Falls Modell nicht im Dropdown verfügbar (alt), fallback
+  if (![...claudeSel.options].some(o => o.value === savedClaude)) savedClaude = 'claude-sonnet-4-6';
+  if (![...openaiSel.options].some(o => o.value === savedOpenai)) savedOpenai = 'gpt-5';
+  claudeSel.value = savedClaude;
+  openaiSel.value = savedOpenai;
+  updateClaudeModelInfo();
+  updateOpenaiModelInfo();
 
-  // Restore active tab
-  switchProviderTab(getActiveProvider());
+  document.getElementById('providerSelect').value = getActiveProvider();
+  onProviderChange();
 
   document.getElementById('apiModal').classList.add('open');
 }
@@ -1433,55 +1512,45 @@ function closeApiModal() {
 function saveApiKey() {
   const claudeKey = document.getElementById('apiKeyInput').value.trim();
   const openaiKey = document.getElementById('openaiKeyInput').value.trim();
-  const provider = getActiveProvider();
+  const provider = document.getElementById('providerSelect').value;
 
-  if (provider === 'claude' && !claudeKey) { alert('Bitte Claude API-Key eingeben.'); return; }
-  if (provider === 'openai' && !openaiKey) { alert('Bitte OpenAI API-Key eingeben.'); return; }
+  if (provider === 'claude' && !claudeKey && !localStorage.getItem('salmana_api_key')) {
+    alert('Bitte Claude API-Key eingeben.'); return;
+  }
+  if (provider === 'openai' && !openaiKey && !localStorage.getItem('salmana_openai_key')) {
+    alert('Bitte OpenAI API-Key eingeben.'); return;
+  }
 
-  if (claudeKey) {
-    localStorage.setItem('salmana_api_key', claudeKey);
-    const activeClaudeCard = document.querySelector('#claudeModelCards .model-card.active');
-    if (activeClaudeCard) localStorage.setItem('salmana_model', activeClaudeCard.dataset.model);
-  }
-  if (openaiKey) {
-    localStorage.setItem('salmana_openai_key', openaiKey);
-    const activeOaiCard = document.querySelector('#openaiModelCards .model-card.active');
-    if (activeOaiCard) localStorage.setItem('salmana_openai_model', activeOaiCard.dataset.model);
-  }
+  if (claudeKey) localStorage.setItem('salmana_api_key', claudeKey);
+  localStorage.setItem('salmana_model', document.getElementById('claudeModelSelect').value);
+
+  if (openaiKey) localStorage.setItem('salmana_openai_key', openaiKey);
+  localStorage.setItem('salmana_openai_model', document.getElementById('openaiModelSelect').value);
+
+  localStorage.setItem('salmana_provider', provider);
 
   updateHeaderModelLabel();
   closeApiModal();
   showStatus('Einstellungen gespeichert. ✓', 'info');
-  setTimeout(() => hideStatus(), 3000);
-}
-
-function selectModel(card) {
-  // Legacy fallback — kept for compatibility
-  document.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
-  card.classList.add('active');
+  setTimeout(() => hideStatus(), 2500);
 }
 
 function getSelectedModel() {
   const provider = getActiveProvider();
   if (provider === 'openai') {
-    return localStorage.getItem('salmana_openai_model') || 'gpt-4o';
+    let m = localStorage.getItem('salmana_openai_model') || 'gpt-5';
+    if (m === 'gpt-4-turbo') m = 'gpt-4o'; // legacy migration
+    return m;
   }
-  return localStorage.getItem('salmana_model') || 'claude-sonnet-4-6';
+  let m = localStorage.getItem('salmana_model') || 'claude-sonnet-4-6';
+  if (m === 'claude-opus-4-6') m = 'claude-opus-4-7'; // legacy migration
+  return m;
 }
 
 function updateHeaderModelLabel() {
-  const provider = getActiveProvider();
   const model = getSelectedModel();
-  const labels = {
-    'claude-sonnet-4-6': '🧠 Sonnet 4.6',
-    'claude-opus-4-6': '🧠 Opus 4.6',
-    'claude-haiku-4-5-20251001': '🧠 Haiku 4.5',
-    'gpt-5': '🤖 GPT-5',
-    'gpt-4o': '🤖 GPT-4o',
-    'gpt-4o-mini': '🤖 GPT-4o mini',
-    'gpt-4-turbo': '🤖 GPT-4 Turbo'
-  };
-  document.getElementById('headerModelLabel').textContent = '· ' + (labels[model] || model);
+  const m = MODEL_CATALOG[model];
+  document.getElementById('headerModelLabel').textContent = '· ' + (m ? m.label : model);
 }
 
 // ─────────────────────────────────────────────
@@ -1670,6 +1739,7 @@ async function callWithActiveProvider(systemPrompt, userPrompt) {
 
 async function callOpenAI(apiKey, systemPrompt, userPrompt, maxRetries = 3) {
   const model = getSelectedModel();
+  const useNewTokenParam = model.startsWith('gpt-5');
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -1679,7 +1749,7 @@ async function callOpenAI(apiKey, systemPrompt, userPrompt, maxRetries = 3) {
       },
       body: JSON.stringify({
         model,
-        ...(model === 'gpt-5' ? { max_completion_tokens: 16000 } : { max_tokens: 4096 }),
+        ...(useNewTokenParam ? { max_completion_tokens: 16000 } : { max_tokens: 8192 }),
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
@@ -1691,6 +1761,7 @@ async function callOpenAI(apiKey, systemPrompt, userPrompt, maxRetries = 3) {
       const data = await response.json();
       const content = data.choices[0].message.content || data.choices[0].message.refusal || '';
       if (!content) throw new Error('Leere Antwort von OpenAI – bitte erneut versuchen.');
+      trackCost(model, data.usage?.prompt_tokens || 0, data.usage?.completion_tokens || 0);
       return content;
     }
 
@@ -1788,6 +1859,7 @@ async function callAnthropicWithRetry(apiKey, body, maxRetries = 3) {
 
     if (response.ok) {
       const data = await response.json();
+      trackCost(body.model, data.usage?.input_tokens || 0, data.usage?.output_tokens || 0);
       return data.content[0].text;
     }
 
@@ -2313,6 +2385,7 @@ function copyAll() {
 // Auto-open API key modal if not set, otherwise show current model in header
 window.addEventListener('load', () => {
   updateHeaderModelLabel();
+  updateCostDisplay();
   const hasClaude = !!localStorage.getItem('salmana_api_key');
   const hasOpenAI = !!localStorage.getItem('salmana_openai_key');
   if (!hasClaude && !hasOpenAI) {
