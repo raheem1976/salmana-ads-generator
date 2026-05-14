@@ -690,6 +690,66 @@
     font-weight: 700;
   }
 
+  /* VOICE-INPUT BUTTON (für Textfelder) */
+  .voice-field-wrap {
+    position: relative;
+  }
+  .voice-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px 6px 10px;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--mid);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .voice-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-dark);
+    background: rgba(201,168,76,0.04);
+  }
+  .voice-btn .voice-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--mid);
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .voice-btn:hover .voice-dot {
+    background: var(--gold);
+  }
+  .voice-btn.listening {
+    background: #FFEEE8;
+    border-color: #E53935;
+    color: #C62828;
+  }
+  .voice-btn.listening .voice-dot {
+    background: #E53935;
+    animation: voice-pulse 1.2s infinite ease-in-out;
+  }
+  @keyframes voice-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
+  }
+  .voice-field-wrap textarea {
+    padding-top: 42px;
+  }
+  .voice-unsupported {
+    display: none !important;
+  }
+
   /* WISSENSDATENBANK */
   .kb-section {
     background: var(--warm-white);
@@ -1084,8 +1144,13 @@
   <div class="section">
     <div class="section-title">01 · Was wird beworben?</div>
 
-    <label><strong>Was wird beworben?</strong> <span style=" font-size:12px; color:var(--mid);">(optional wenn Landingpage-URL angegeben)</span><br><span style=" font-size:12px; color:var(--mid);">Wenn du eine URL eingibst, liest Claude die Seite automatisch und extrahiert Thema, Nutzen & Details selbst.</span></label>
-    <textarea id="workshopDesc" rows="3" placeholder="z.B. Kostenloses Webinar: Dein Start ins PMU-Business – 15. Juni, 19 Uhr&#10;Oder leer lassen wenn du unten eine Landingpage-URL eingibst ↓"></textarea>
+    <label><strong>Was wird beworben?</strong> <span style="font-size:12px; color:var(--mid);">(optional wenn Landingpage-URL angegeben)</span><br><span style="font-size:12px; color:var(--mid);">Wenn du eine URL eingibst, liest Claude die Seite automatisch und extrahiert Thema, Nutzen & Details selbst.</span></label>
+    <div class="voice-field-wrap">
+      <button type="button" class="voice-btn" id="workshopDescVoiceBtn" onclick="toggleVoice('workshopDesc', 'workshopDescVoiceBtn', null)" title="Per Sprache eingeben">
+        <span class="voice-dot"></span><span class="voice-label">Sprechen</span>
+      </button>
+      <textarea id="workshopDesc" rows="3" placeholder="z.B. Kostenloses Webinar: Dein Start ins PMU-Business – 15. Juni, 19 Uhr&#10;Oder leer lassen wenn du unten eine Landingpage-URL eingibst ↓"></textarea>
+    </div>
 
     <label><strong>Landingpage-URL</strong> <span style="color:var(--mid); font-size:12px; ">(wird automatisch gelesen)</span></label>
     <input type="url" id="landingUrl" placeholder="https://workshop.salmana-beauty-academy.de/..." oninput="scheduleFetch()" />
@@ -1170,9 +1235,14 @@
       Welche Interessen, Lookalikes oder Custom Audiences werden in diesem Adset angesprochen? Die KI nutzt diese Info subtil als Bildwelt &amp; Sprache (nie plakativ wie &bdquo;Da du dich für X interessierst&hellip;&ldquo;).
     </p>
 
-    <textarea id="fbTargeting" rows="4"
-      oninput="persistTextField('fbTargeting', 'salmana_fb_targeting')"
-      placeholder="Beispiel:&#10;Interessen: Brautstyling, Hochzeitsfrisuren, Wedding Planning Deutschland&#10;Lookalike: Workshop-Anmelderinnen 2025 (1%)&#10;Custom Audience: Page-Besucher letzte 90 Tage"></textarea>
+    <div class="voice-field-wrap">
+      <button type="button" class="voice-btn" id="fbTargetingVoiceBtn" onclick="toggleVoice('fbTargeting', 'fbTargetingVoiceBtn', 'salmana_fb_targeting')" title="Per Sprache eingeben">
+        <span class="voice-dot"></span><span class="voice-label">Sprechen</span>
+      </button>
+      <textarea id="fbTargeting" rows="4"
+        oninput="persistTextField('fbTargeting', 'salmana_fb_targeting')"
+        placeholder="Beispiel:&#10;Interessen: Brautstyling, Hochzeitsfrisuren, Wedding Planning Deutschland&#10;Lookalike: Workshop-Anmelderinnen 2025 (1%)&#10;Custom Audience: Page-Besucher letzte 90 Tage"></textarea>
+    </div>
     <button type="button" class="clear-field-btn" id="fbTargetingClearBtn" onclick="clearPersistedTextField('fbTargeting', 'salmana_fb_targeting')" style="display:none;">Inhalt löschen</button>
   </div>
 
@@ -1190,7 +1260,12 @@
     </div>
     <input type="file" id="hookFileInput" accept=".txt,.csv" onchange="readFile(event)" />
 
-    <textarea id="pastHooks" rows="5" oninput="persistTextField('pastHooks', 'salmana_past_hooks')" placeholder="Beispiel:&#10;Hook 1: 'Du träumst schon lange davon, dein eigenes Studio zu eröffnen – aber weißt nicht, wo du anfangen sollst.'&#10;Hook 2: 'Der Wecker klingelt. Und du weißt: Das ist nicht das Leben, das du dir vorgestellt hast.'&#10;..."></textarea>
+    <div class="voice-field-wrap">
+      <button type="button" class="voice-btn" id="pastHooksVoiceBtn" onclick="toggleVoice('pastHooks', 'pastHooksVoiceBtn', 'salmana_past_hooks')" title="Per Sprache eingeben">
+        <span class="voice-dot"></span><span class="voice-label">Sprechen</span>
+      </button>
+      <textarea id="pastHooks" rows="5" oninput="persistTextField('pastHooks', 'salmana_past_hooks')" placeholder="Beispiel:&#10;Hook 1: 'Du träumst schon lange davon, dein eigenes Studio zu eröffnen – aber weißt nicht, wo du anfangen sollst.'&#10;Hook 2: 'Der Wecker klingelt. Und du weißt: Das ist nicht das Leben, das du dir vorgestellt hast.'&#10;..."></textarea>
+    </div>
     <button type="button" class="clear-field-btn" id="pastHooksClearBtn" onclick="clearPersistedTextField('pastHooks', 'salmana_past_hooks')" style="display:none;">Inhalt löschen</button>
   </div>
 
@@ -1245,11 +1320,16 @@
         Füge Einwände, Probleme aus Beratungsgesprächen oder weitere Insights ein.<br>
         Schreibe optional die Zielgruppe davor – sonst gilt der Punkt für alle.
       </p>
-      <textarea id="zusatzInfos"
-        oninput="persistTextField('zusatzInfos', 'salmana_zusatz_infos')"
-        placeholder='Angestellte: "Ich hab kein Talent zum Zeichnen."&#10;Mütter: "Ich hab keine Zeit neben dem Baby."&#10;Artist: "Meine ersten Versuche waren nicht perfekt."&#10;Allgemein: "Das ist mir zu teuer."'
-        style="width:100%; min-height:130px; padding:12px; border:1.5px solid var(--border); border-radius:4px; font-size:14px; line-height:1.6; resize:vertical; background:var(--warm-white); color:var(--dark);  box-sizing:border-box; outline:none;"
-        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      <div class="voice-field-wrap">
+        <button type="button" class="voice-btn" id="zusatzInfosVoiceBtn" onclick="toggleVoice('zusatzInfos', 'zusatzInfosVoiceBtn', 'salmana_zusatz_infos')" title="Per Sprache eingeben">
+          <span class="voice-dot"></span><span class="voice-label">Sprechen</span>
+        </button>
+        <textarea id="zusatzInfos"
+          oninput="persistTextField('zusatzInfos', 'salmana_zusatz_infos')"
+          placeholder='Angestellte: "Ich hab kein Talent zum Zeichnen."&#10;Mütter: "Ich hab keine Zeit neben dem Baby."&#10;Artist: "Meine ersten Versuche waren nicht perfekt."&#10;Allgemein: "Das ist mir zu teuer."'
+          style="width:100%; min-height:130px; padding:42px 12px 12px 12px; border:1.5px solid var(--border); border-radius:4px; font-size:14px; line-height:1.6; resize:vertical; background:var(--warm-white); color:var(--dark); box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      </div>
       <button type="button" class="clear-field-btn" id="zusatzInfosClearBtn" onclick="clearPersistedTextField('zusatzInfos', 'salmana_zusatz_infos')" style="display:none;">Inhalt löschen</button>
     </div>
   </div>
@@ -1327,25 +1407,25 @@
 
   <div class="section-divider"><span>Caption Generator</span></div>
 
-  <!-- SECTION 06: Was & Anlass -->
+  <!-- SECTION 06: Inhalt & Zielgruppe -->
   <div class="section">
-    <div class="section-title">06 · Was soll die Caption kommunizieren?</div>
-    <p style=" font-size:14px; color:var(--mid); margin-bottom:20px; line-height:1.6;">
-      Fertige Facebook- &amp; Instagram-Captions – mit Emojis, sauberem Zeilenumbruch und angepasst auf deine Zielgruppe. Direkt copy-pastebar.
+    <div class="section-title">06 · Inhalt &amp; Zielgruppe</div>
+    <p style="font-size:13px; color:var(--mid); margin-bottom:18px; line-height:1.6;">
+      Fertige Facebook- &amp; Instagram-Captions – mit Emojis, sauberem Zeilenumbruch, angepasst auf Zielgruppe und Traffic-Temperatur.
     </p>
 
-    <label><strong>Thema / Anlass der Caption</strong><br>z.B. "Absolventin hat Studio eröffnet", "Webinar nächste Woche", "allgemeiner Mut-mach-Post", "Einwand: kein Talent"</label>
-    <textarea id="captionThema" rows="3" placeholder="Was ist der Inhalt oder Anlass? Je mehr Details, desto besser die Caption..."></textarea>
+    <label><strong>Thema / Anlass der Caption</strong><br><span class="label-note">z.B. "Absolventin hat Studio eröffnet", "Webinar nächste Woche", "Mut-mach-Post für Mütter", "Einwand: kein Talent"</span></label>
+    <div class="voice-field-wrap">
+      <button type="button" class="voice-btn" id="captionThemaVoiceBtn" onclick="toggleVoice('captionThema', 'captionThemaVoiceBtn', null)" title="Per Sprache eingeben">
+        <span class="voice-dot"></span><span class="voice-label">Sprechen</span>
+      </button>
+      <textarea id="captionThema" rows="3" placeholder="Was ist der Inhalt oder Anlass? Je mehr Details, desto besser die Caption..."></textarea>
+    </div>
 
-    <label><strong>Optional: Landingpage-URL</strong> <span style="color:var(--mid); font-size:12px; ">(für Workshop/Webinar-Captions)</span></label>
+    <label><strong>Optional: Landingpage-URL</strong> <span class="label-hint">(für Workshop/Webinar-Captions)</span></label>
     <input type="url" id="captionUrl" placeholder="https://..." />
-  </div>
 
-  <!-- SECTION 07: Zielgruppe -->
-  <div class="section">
-    <div class="section-title">07 · Zielgruppe &amp; Traffic</div>
-
-    <label><strong>Welche Zielgruppe sprichst du an?</strong></label>
+    <label style="margin-top:18px;"><strong>Zielgruppe</strong></label>
     <div class="chip-group" id="captionZielgruppeChips">
       <div class="chip active" data-val="Angestellt">Angestellt</div>
       <div class="chip" data-val="Mutter in Elternzeit">Elternzeit</div>
@@ -1354,21 +1434,19 @@
       <div class="chip" data-val="Guter Mix">Guter Mix</div>
     </div>
 
-    <div style="margin-top:12px;">
-      <label><strong>Traffic-Temperatur</strong></label>
-      <div class="chip-group" id="captionTrafficChips">
-        <div class="chip active" data-val="organisch">Organisch</div>
-        <div class="chip" data-val="retargeting">Retargeting</div>
-      </div>
-      <div id="captionTrafficHint" class="inline-hint" style="display:none;"></div>
+    <label style="margin-top:10px;"><strong>Traffic-Temperatur</strong></label>
+    <div class="chip-group" id="captionTrafficChips">
+      <div class="chip active" data-val="organisch">Organisch</div>
+      <div class="chip" data-val="retargeting">Retargeting</div>
     </div>
+    <div id="captionTrafficHint" class="inline-hint" style="display:none;"></div>
   </div>
 
-  <!-- SECTION 08: Typ & Menge -->
+  <!-- SECTION 07: Caption-Typ & Format -->
   <div class="section">
-    <div class="section-title">08 · Caption-Typ &amp; Anzahl</div>
+    <div class="section-title">07 · Caption-Typ &amp; Format</div>
 
-    <label><strong>Was soll die Caption bewirken?</strong></label>
+    <label><strong>Was soll die Caption bewirken?</strong> <span class="label-hint">(mehrere wählbar)</span></label>
     <div class="chip-group" id="captionTypChips">
       <div class="chip active" data-val="Mut-Macher – emotional, teilen-würdig, baut Beziehung & Vertrauen auf, KEIN harter Verkaufs-CTA (max. weicher Einladungs-Schluss)">Mut-Macher</div>
       <div class="chip" data-val="Salmana persönlich – Salmas eigene Geschichte ODER Behind-the-Scenes / Tag im Studio, baut Identifikation und Nähe auf, Ich-Perspektive zwingend">Salmana persönlich</div>
@@ -1378,7 +1456,7 @@
       <div class="chip" data-val="Einwand auflösen – adressiert einen konkreten Kunden-Zweifel direkt (Talent, Geld, Zeit, 'mein Mann sagt…', 'ich bin zu alt'), zeigt empathisch wie Salmana ihn entkräftet">Einwand auflösen</div>
     </div>
 
-    <div class="row-2" style="margin-top:8px;">
+    <div class="row-2" style="margin-top:14px;">
       <div>
         <label><strong>Wie viele Captions?</strong></label>
         <div class="chip-group" id="captionCountChips">
@@ -1390,12 +1468,11 @@
         </div>
       </div>
       <div>
-        <label><strong>Hashtag-Block anhängen?</strong></label>
+        <label><strong>Hashtag-Block?</strong> <span class="label-hint">(10–15 DE+EN)</span></label>
         <div class="chip-group" id="captionHashtagChips">
           <div class="chip active" data-val="ja">Ja</div>
           <div class="chip" data-val="nein">Nein</div>
         </div>
-        <div class="label-note">10–15 relevante Hashtags auf Deutsch &amp; Englisch</div>
       </div>
     </div>
   </div>
@@ -1884,6 +1961,96 @@ function toggleKb() {
   const toggle = document.getElementById('kbToggle');
   const isOpen = body.classList.toggle('open');
   toggle.textContent = isOpen ? '−' : '+';
+}
+
+// ─────────────────────────────────────────────
+//  VOICE-INPUT (Web Speech API, de-DE)
+// ─────────────────────────────────────────────
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const VOICE_SUPPORTED = !!SpeechRecognition;
+const voiceState = {}; // pro textareaId: { recognition, isListening, finalBase }
+
+function toggleVoice(textareaId, btnId, storageKey) {
+  if (!VOICE_SUPPORTED) {
+    showStatus('Spracheingabe wird in diesem Browser nicht unterstützt. Bitte Chrome, Edge oder Safari nutzen.', 'error');
+    setTimeout(hideStatus, 4000);
+    return;
+  }
+  const textarea = document.getElementById(textareaId);
+  const btn = document.getElementById(btnId);
+  if (!textarea || !btn) return;
+
+  const state = voiceState[textareaId] || {};
+  voiceState[textareaId] = state;
+
+  // Bereits aktiv → stoppen
+  if (state.isListening && state.recognition) {
+    state.recognition.stop();
+    return;
+  }
+
+  // Neue Recognition starten
+  const rec = new SpeechRecognition();
+  rec.lang = 'de-DE';
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.maxAlternatives = 1;
+
+  state.recognition = rec;
+  state.finalBase = textarea.value;
+  state.isListening = true;
+  btn.classList.add('listening');
+  btn.querySelector('.voice-label').textContent = 'Stopp';
+
+  rec.onresult = (event) => {
+    let interim = '';
+    let finalAdd = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) finalAdd += transcript;
+      else interim += transcript;
+    }
+    if (finalAdd) {
+      const sep = state.finalBase && !state.finalBase.match(/[\s\n]$/) ? ' ' : '';
+      state.finalBase = state.finalBase + sep + finalAdd.trim();
+    }
+    const sepI = state.finalBase && interim && !state.finalBase.match(/[\s\n]$/) ? ' ' : '';
+    textarea.value = state.finalBase + sepI + interim.trim();
+    if (storageKey) persistTextField(textareaId, storageKey);
+  };
+
+  rec.onerror = (event) => {
+    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+      showStatus('Mikrofon-Berechtigung verweigert. Bitte in den Browser-Einstellungen freigeben.', 'error');
+      setTimeout(hideStatus, 5000);
+    } else if (event.error === 'no-speech') {
+      // Stille — ignorieren, onend macht den Rest
+    } else {
+      showStatus('Spracheingabe-Fehler: ' + event.error, 'error');
+      setTimeout(hideStatus, 4000);
+    }
+  };
+
+  rec.onend = () => {
+    state.isListening = false;
+    btn.classList.remove('listening');
+    btn.querySelector('.voice-label').textContent = 'Sprechen';
+    if (storageKey) persistTextField(textareaId, storageKey);
+  };
+
+  try {
+    rec.start();
+  } catch (e) {
+    state.isListening = false;
+    btn.classList.remove('listening');
+    btn.querySelector('.voice-label').textContent = 'Sprechen';
+  }
+}
+
+function initVoiceButtons() {
+  if (!VOICE_SUPPORTED) {
+    document.querySelectorAll('.voice-btn').forEach(b => b.classList.add('voice-unsupported'));
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -3054,6 +3221,7 @@ window.addEventListener('load', () => {
   restorePersistedTextField('pastHooks', 'salmana_past_hooks');
   restorePersistedTextField('zusatzInfos', 'salmana_zusatz_infos');
   restorePersistedTextField('fbTargeting', 'salmana_fb_targeting');
+  initVoiceButtons();
   const hasClaude = !!localStorage.getItem('salmana_api_key');
   const hasOpenAI = !!localStorage.getItem('salmana_openai_key');
   if (!hasClaude && !hasOpenAI) {
