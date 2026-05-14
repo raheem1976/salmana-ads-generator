@@ -2692,6 +2692,17 @@ async function callAnthropicWithRetry(apiKey, body, maxRetries = 3) {
 
 function buildPrompt({ desc, hookCount, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, zusatzInfos, fbTargeting }) {
 
+  // Polarisierungs-Quote pro Zielgruppe (Mütter zarter, Selbständige härter)
+  const POLAR_QUOTAS = {
+    'Angestellt': { pct: 30, focus: 'Polarisiere GEGEN den "Ich-muss-zurück-in-den-alten-Job"-Mainstream und gegen die Resignation "das ist halt so". NIEMALS gegen die Frau selbst. Sie kennt den Frust — sie braucht eine klare Position gegen die Lage, nicht gegen sich.' },
+    'Mutter in Elternzeit': { pct: 15, focus: 'Diese Zielgruppe ist in einer VERLETZLICHEN Phase. Polarisiere SPARSAM und IMMER empathisch. Wenn polarisiert: gegen Branchen-Mythen ("Erstmal das Kind, dann denken wir an Karriere"), niemals gegen die Mutter selbst. Sie fühlt sich eh schon zerrissen zwischen Kind und eigenem Leben — sie braucht Verbündete, keine harten Wahrheiten ins Gesicht.' },
+    'Selbständig (Beauty)': { pct: 35, focus: 'Diese Zielgruppe ist im Hamsterrad und verträgt KLARE Konfrontation. Polarisiere offensiv gegen den Status quo ("Solange du nur mit deinen Händen arbeitest, hast du kein Business — du hast einen Job"), gegen Branchen-Klischees, gegen die Selbst-Limitierung. Sie ist Unternehmerin — sie will klare Worte, keine Schonhaltung.' },
+    'Bereits Artist (traut sich nicht)': { pct: 20, focus: 'Diese Zielgruppe trägt SCHAM (Geld in Crashkurs verloren, traut sich nicht). Polarisiere GEGEN die Crashkurs-Industrie ("2 Tage reichen nicht — das wusste der Anbieter") und GEGEN die Floskel "du hast halt kein Talent". NIEMALS gegen die Frau selbst. Sie fühlt sich eh schon schuldig — sie braucht jemanden, der ihr sagt: "Du wurdest betrogen, nicht du hast versagt."' },
+    'Guter Mix': { pct: 25, focus: 'Mische verschiedene Polarisierungs-Stärken über die Zielgruppen hinweg. Bei Mamas zarter, bei Selbständigen härter, bei Artist gegen Crashkurs-Industrie. NIEMALS gegen die Frau selbst, immer gegen Branche/Status quo.' }
+  };
+  const polarConfig = POLAR_QUOTAS[zielgruppe] || POLAR_QUOTAS['Guter Mix'];
+  const polarMin = Math.max(1, Math.round(hookCount * polarConfig.pct / 100));
+
   // Determine cold/warm/retargeting split
   const isMix = traffic.startsWith('Mix');
   const cold = Math.round(hookCount * 0.65);
@@ -2874,14 +2885,16 @@ Jeder Hook MUSS gleichzeitig diese vier Wirkungen erfüllen:
 - **EMOTIONAL** — keine rationale Argumentation am Anfang. Gefühl kommt vor Logik
 - **KONVERSIONSSTARK** — führt direkt zum Klick / zum Weiterlesen. Kein Selbstzweck
 
-ZUSÄTZLICH POLARISIERUNG (verschärft — KI hat hier in der Vergangenheit zu sanft formuliert):
-- **MINDESTENS 30% der Hooks** (egal welches Pattern) MÜSSEN aktiv POLARISIEREN.
-- Polarisieren heißt: bezieht eine klare, harte Position gegen Mainstream-Meinung. Spaltet das Publikum in "JA, das bin ich" und "Geht mir am Arsch vorbei — scrollen". Genau das ist gewünscht.
-- Polarisierung-Beispiele für PMU/Salmana-Kontext:
-  ✅ "'2 Tage reichen für eine PMU-Ausbildung.' Falsch. Frag mal die Frau, die danach allein vor ihrer ersten Kundin steht."
-  ✅ "Wer denkt 'ich hab kein Talent', hat noch nie meine Absolventinnen gesehen."
-  ✅ "Die meisten PMU-Schulen interessiert deine Karriere nach dem Kurs nicht. Mich schon."
-  ✅ "Du wartest auf den richtigen Moment? Den gibt es nicht. Du erfindest ihn."
+ZUSÄTZLICH POLARISIERUNG (zielgruppen-spezifische Quote):
+- Für die Zielgruppe **${zielgruppe}** gilt: **MINDESTENS ${polarMin} der ${hookCount} Hooks (${polarConfig.pct}%)** MÜSSEN aktiv POLARISIEREN.
+- Polarisieren heißt: bezieht eine klare, harte Position gegen Mainstream-Meinung oder Branchen-Status-quo. Spaltet das Publikum in "JA, das bin ich" und "Geht mir am Arsch vorbei — scrollen". Genau das ist gewünscht.
+- **WICHTIGER TONALITÄTS-HINWEIS für ${zielgruppe}:**
+  ${polarConfig.focus}
+- Polarisierung-Beispiele für PMU/Salmana-Kontext (immer GEGEN Branche/Mainstream, nie gegen die Frau):
+  ✅ "'2 Tage reichen für eine PMU-Ausbildung.' Falsch. Frag mal die Frau, die danach allein vor ihrer ersten Kundin steht." (gegen Crashkurs-Industrie)
+  ✅ "Wer denkt 'ich hab kein Talent', hat noch nie meine Absolventinnen gesehen." (gegen Talent-Mythos)
+  ✅ "Die meisten PMU-Schulen interessiert deine Karriere nach dem Kurs nicht. Mich schon." (gegen Branche)
+  ✅ "Du wartest auf den richtigen Moment? Den gibt es nicht. Du erfindest ihn." (gegen Warte-Reflex)
 - KEIN sanft-melancholischer Hook gilt als polarisierend, selbst wenn er emotional ist.
 
 GESCHRIEBEN NACH OGILVY-PRINZIPIEN (siehe System-Prompt):
