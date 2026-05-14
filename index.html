@@ -828,6 +828,29 @@
     font-style: italic;
   }
 
+  /* EDITIERBARE OUTPUT-TEXTE */
+  [contenteditable="true"].hook-text,
+  [contenteditable="true"].ad-content,
+  [contenteditable="true"].caption-text {
+    cursor: text;
+    outline: none;
+    border-radius: 3px;
+    padding: 4px 6px;
+    margin: -4px -6px;
+    transition: background-color 0.15s, box-shadow 0.15s;
+  }
+  [contenteditable="true"].hook-text:hover,
+  [contenteditable="true"].ad-content:hover,
+  [contenteditable="true"].caption-text:hover {
+    background: rgba(201,168,76,0.04);
+  }
+  [contenteditable="true"].hook-text:focus,
+  [contenteditable="true"].ad-content:focus,
+  [contenteditable="true"].caption-text:focus {
+    background: var(--warm-white);
+    box-shadow: 0 0 0 1px var(--gold-light), 0 0 0 4px rgba(201,168,76,0.1);
+  }
+
   /* BUTTON ROW (kopieren + herunterladen nebeneinander) */
   .btn-row {
     display: flex;
@@ -1285,7 +1308,7 @@
           <button class="copy-all-btn secondary" onclick="downloadHooks()">Als Doc herunterladen</button>
         </div>
       </div>
-      <p class="output-section-hint">Klick auf einen Hook-Text, um ihn zu kopieren. Farbcode: hellblau = Cold · gelb = Warm · rot = Retargeting</p>
+      <p class="output-section-hint">Klick in einen Hook, um ihn direkt zu bearbeiten — Änderungen werden beim Kopieren &amp; Download mitgenommen. Farbcode: hellblau = Cold · gelb = Warm · rot = Retargeting.</p>
       <div class="hooks-grid" id="hooksGrid"></div>
     </div>
 
@@ -1300,7 +1323,7 @@
           <button class="copy-all-btn secondary" onclick="downloadBodies()">Als Doc herunterladen</button>
         </div>
       </div>
-      <p class="output-section-hint">Der Haupttext der Ad – jeder Body passt direkt zu seinem Hook (Body 1 → Hook 1 usw.).</p>
+      <p class="output-section-hint">Der Haupttext der Ad – jeder Body passt direkt zu seinem Hook (Body 1 → Hook 1 usw.). Klick zum direkten Bearbeiten.</p>
       <div id="bodyCards"></div>
     </div>
 
@@ -1315,7 +1338,7 @@
           <button class="copy-all-btn secondary" onclick="downloadCtas()">Als Doc herunterladen</button>
         </div>
       </div>
-      <p class="output-section-hint">Die letzte Zeile – kombiniere sie frei mit Hook + Body.</p>
+      <p class="output-section-hint">Die letzte Zeile – kombiniere sie frei mit Hook + Body. Klick zum direkten Bearbeiten.</p>
       <div id="ctaCards"></div>
     </div>
   </div>
@@ -2898,21 +2921,18 @@ function parseAndRender(raw) {
       const isRetarg = h.type.includes('🔥') || h.type.toLowerCase().includes('retarg');
       const tempClass = isCold ? 'temp-cold' : isWarm ? 'temp-warm' : isRetarg ? 'temp-retarg' : '';
       const tempLabel = isCold ? 'Cold' : isWarm ? 'Warm' : isRetarg ? 'Retargeting' : '';
-      // Emoji-Marker aus Typ-String entfernen für saubere Anzeige
       const cleanType = h.type.replace(/[❄🌤🔥️⚡✦]/g, '').trim().replace(/\s+/g, ' ');
       const card = document.createElement('div');
       card.className = 'hook-card';
-      card.style.cursor = 'pointer';
       card.innerHTML = `
-        <button class="card-copy-btn" onclick="copyText('${escJs(h.text)}', this)">Kopieren</button>
+        <button class="card-copy-btn" onclick="copyTextFromCard(this, '.hook-text')" title="Kopiert die aktuelle (ggf. bearbeitete) Version">Kopieren</button>
         <div class="hook-number">Hook ${h.num}</div>
-        <div class="hook-text">${escHtml(h.text)}</div>
+        <div class="hook-text" contenteditable="true" spellcheck="true">${escHtml(h.text)}</div>
         <div class="hook-meta">
           <span class="hook-type ${tempClass}">${escHtml(cleanType)}</span>
           ${tempLabel ? `<span class="hook-temp ${tempClass}">${tempLabel}</span>` : ''}
         </div>
       `;
-      card.addEventListener('click', () => copyText(h.text, card.querySelector('.card-copy-btn')));
       grid.appendChild(card);
     });
     document.getElementById('hooksSection').style.display = 'block';
@@ -2929,9 +2949,9 @@ function parseAndRender(raw) {
           <div class="ad-card-title">Body ${b.num}</div>
           <span class="ad-framework-tag">${b.thema.match(/^\d+$/) ? '→ Hook ' + b.thema : escHtml(b.thema)}</span>
         </div>
-        <div class="ad-content" style="white-space:pre-wrap;">${escHtml(b.text)}</div>
+        <div class="ad-content" contenteditable="true" spellcheck="true" style="white-space:pre-wrap;">${escHtml(b.text)}</div>
         <div class="ad-copy-row">
-          <button class="copy-part-btn" onclick="copyText('${escJs(b.text)}', this)">Body kopieren</button>
+          <button class="copy-part-btn" onclick="copyTextFromCard(this, '.ad-content')">Body kopieren</button>
         </div>
       `;
       bodyContainer.appendChild(div);
@@ -2945,18 +2965,16 @@ function parseAndRender(raw) {
     ctas.forEach(c => {
       const div = document.createElement('div');
       div.className = 'ad-card';
-      div.style.cursor = 'pointer';
       div.innerHTML = `
         <div class="ad-card-header">
           <div class="ad-card-title">CTA ${c.num}</div>
           <span class="ad-framework-tag">${escHtml(c.type)}</span>
         </div>
-        <div class="ad-content" style="font-size:16px; font-weight:600;">${escHtml(c.text)}</div>
+        <div class="ad-content" contenteditable="true" spellcheck="true" style="font-size:16px; font-weight:600;">${escHtml(c.text)}</div>
         <div class="ad-copy-row">
-          <button class="copy-part-btn" onclick="copyText('${escJs(c.text)}', this)">CTA kopieren</button>
+          <button class="copy-part-btn" onclick="copyTextFromCard(this, '.ad-content')">CTA kopieren</button>
         </div>
       `;
-      div.addEventListener('click', () => copyText(c.text, div.querySelector('.copy-part-btn')));
       ctaContainer.appendChild(div);
     });
     document.getElementById('ctaSection').style.display = 'block';
@@ -3021,6 +3039,28 @@ async function copyText(text, btn) {
     }
   } catch(e) {}
 }
+
+// Kopiert den aktuellen (ggf. bearbeiteten) Text aus dem nächsten passenden
+// Element im selben Card. Wird von allen "Kopieren"-Buttons in Output-Cards
+// verwendet, damit Stefans Bearbeitungen mitgenommen werden.
+function copyTextFromCard(btn, selector) {
+  const card = btn.closest('.hook-card, .ad-card, .caption-card');
+  if (!card) return;
+  const el = card.querySelector(selector);
+  if (!el) return;
+  copyText((el.textContent || '').trim(), btn);
+}
+
+// Globaler Paste-Handler: in editierbaren Output-Feldern nur Plain-Text einfügen
+// (verhindert dass Word/Browser-Formatierung das Layout zerschießt).
+document.addEventListener('paste', (e) => {
+  const target = e.target;
+  if (!target || !target.isContentEditable) return;
+  if (!target.matches('.hook-text, .ad-content, .caption-text')) return;
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  document.execCommand('insertText', false, text);
+});
 
 function copyAll() {
   const hooks = [...document.querySelectorAll('.hook-text')].map((el,i) => `Hook ${i+1}: ${el.textContent}`).join('\n');
@@ -3435,22 +3475,24 @@ function parseCaptionsAndRender(raw) {
           <span class="caption-tag">${escHtml(c.typ)}</span>
         </div>
       </div>
-      <div class="caption-text" id="captionText${c.num}">${escHtml(c.text)}</div>
+      <div class="caption-text" contenteditable="true" spellcheck="true" id="captionText${c.num}">${escHtml(c.text)}</div>
       <div class="caption-preview-note">
         Auf Facebook/Instagram erscheinen Emojis &amp; Zeilenumbrüche genau so wie oben dargestellt.
       </div>
       <div class="ad-copy-row" style="margin-top:14px;">
-        <button class="copy-part-btn" onclick="copyText('${escJs(c.text)}', this)">Caption kopieren</button>
-        <button class="copy-part-btn" onclick="copyCaptionHook('${escJs(c.text)}', this)">Hook kopieren</button>
+        <button class="copy-part-btn" onclick="copyTextFromCard(this, '.caption-text')">Caption kopieren</button>
+        <button class="copy-part-btn" onclick="copyCaptionHookFromCard(this)">Hook kopieren</button>
       </div>
     `;
     container.appendChild(card);
   });
 }
 
-function copyCaptionHook(text, btn) {
-  // Extract first line (hook) from caption
-  const firstLine = text.split('\n')[0].trim();
+function copyCaptionHookFromCard(btn) {
+  const card = btn.closest('.caption-card');
+  if (!card) return;
+  const text = card.querySelector('.caption-text')?.textContent || '';
+  const firstLine = text.split('\n').map(l => l.trim()).filter(Boolean)[0] || '';
   copyText(firstLine, btn);
 }
 
