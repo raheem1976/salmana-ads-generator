@@ -2716,6 +2716,18 @@ function buildPrompt({ desc, hookCount, placement, traffic, goal, zielgruppe, pa
   const polarConfig = POLAR_QUOTAS[zielgruppe] || POLAR_QUOTAS['Guter Mix'];
   const polarMin = Math.max(1, Math.round(hookCount * polarConfig.pct / 100));
 
+  // Zahlungskräftigkeits-Filter pro Zielgruppe — filtert vor dem Klick auf qualifizierte Audience
+  // Ziel: weniger Beratungsgespräche mit "kein Geld"-Einwand
+  const PAYMENT_QUOTAS = {
+    'Angestellt': { pct: 35, triggers: 'Nenne KONKRETE Berufe mit Durchschnittseinkommen (MFA, ZFA, Krankenschwester, Bürokauffrau, Verkäuferin im Premium-Segment, Buchhalterin, Steuerfachangestellte, Hotelfachfrau). Nicht "irgendein Job" — sondern qualifizierte Ausbildungs-Berufe.\n  Beispiele:\n  ✅ "Du arbeitest seit 8 Jahren als MFA — und denkst dir: das war\'s noch nicht."\n  ✅ "Krankenschwestern, die wissen: 12-Stunden-Schichten sind nicht mein Lebensplan."\n  ✅ "Bürokauffrau seit 10 Jahren. Und immer noch zwei Wochen Urlaub am Stück verhandeln müssen."' },
+    'Mutter in Elternzeit': { pct: 35, triggers: 'Nutze Trigger, die auf VORHERIGES Einkommen / Berufsperspektive deuten: "alter Job", "Wiedereinstieg", "Elterngeld läuft aus", "berufliche Zukunft", "in [X] Monaten zurück", "nach der Elternzeit".\n  Beispiele:\n  ✅ "In 8 Monaten muss ich zurück in den alten Job."\n  ✅ "Mein Elterngeld läuft im Mai aus — und dann?"\n  ✅ "Zurück in meinen alten Bürojob nach der Elternzeit? Auf keinen Fall."\n  Diese Trigger filtern auf Frauen mit Berufshintergrund (= hatten ein Einkommen).' },
+    'Selbständig (Beauty)': { pct: 40, triggers: 'Nenne KONKRETE Business-Marker: bestehendes Studio, Umsatz-Bezug, "deine Kundinnen", "dein Kalender", "deine Preise". NICHT "vielleicht arbeitest du schon im Beauty" — sondern "du hast ein Studio".\n  Beispiele:\n  ✅ "Du machst 4.000 € Monatsumsatz — und weißt: mehr Hände sind nicht die Lösung."\n  ✅ "Dein Studio läuft. Dein Kalender ist voll. Dein Konto trotzdem nicht."\n  ✅ "Du arbeitest seit 5 Jahren als Kosmetikerin und stößt langsam an deine Decke."\n  Filtert auf etablierte Selbständige mit Cashflow, schließt Hobby-Beauty-Pages aus.' },
+    'Bereits Artist (traut sich nicht)': { pct: 50, triggers: 'Mach BEREITS GETÄTIGTE INVESTITION explizit zum Hook-Bestandteil — diese Audience hat 4-stellige Beträge in PMU gesteckt und ist damit hochqualifiziert.\n  Beispiele:\n  ✅ "Du hast 1.200 € in einen Crashkurs gesteckt — und seitdem steht die Maschine im Schrank."\n  ✅ "800 € für 2 Tage. Und du traust dich trotzdem nicht an deine erste echte Kundin."\n  ✅ "Deine PMU-Maschine staubt ein. Schade ums Geld — aber jetzt machen wir was draus."\n  ✅ "Drei Schritte mit deiner Maschine. Dann legst du sie wieder weg. Du weißt es selbst."\n  Diese Audience hat bewiesen, dass sie investiert — diese Quote ist deshalb HOCH (50%).' },
+    'Guter Mix': { pct: 35, triggers: 'Mische die Filter aus allen Zielgruppen je nach Sub-Audience. Konkrete Berufe für Angestellte, "alter Job" für Mütter, "dein Studio" für Selbständige, "Crashkurs-Investition" für Artist.' }
+  };
+  const payConfig = PAYMENT_QUOTAS[zielgruppe] || PAYMENT_QUOTAS['Guter Mix'];
+  const payMin = Math.max(1, Math.round(hookCount * payConfig.pct / 100));
+
   // Determine cold/warm/retargeting split
   const isMix = traffic.startsWith('Mix');
   const cold = Math.round(hookCount * 0.65);
@@ -2909,6 +2921,24 @@ ZUSÄTZLICH POLARISIERUNG (zielgruppen-spezifische Quote):
   ✅ "Die meisten PMU-Schulen interessiert deine Karriere nach dem Kurs nicht. Mich schon." (gegen Branche)
   ✅ "Du wartest auf den richtigen Moment? Den gibt es nicht. Du erfindest ihn." (gegen Warte-Reflex)
 - KEIN sanft-melancholischer Hook gilt als polarisierend, selbst wenn er emotional ist.
+
+ZUSÄTZLICH ZAHLUNGSKRÄFTIGKEITS-FILTER (zielgruppen-spezifische Quote):
+Ziel: Schon im Hook auf eine ZAHLUNGSFÄHIGE Audience vor-filtern — damit weniger Beratungsgespräche mit "kein Geld"-Einwand stattfinden. Salmana hatte zuletzt ROAS 6 und 35-38% Conversion — der "Geld"-Einwand kostet Cash. Dieser Filter optimiert genau das.
+
+- Für **${zielgruppe}** gilt: **MINDESTENS ${payMin} der ${hookCount} Hooks (${payConfig.pct}%)** müssen einen Zahlungskräftigkeits-Indikator tragen, der zur Zielgruppe passt.
+- **Konkrete Trigger und Beispiele für ${zielgruppe}:**
+  ${payConfig.triggers}
+
+- Ein Hook kann GLEICHZEITIG polarisieren UND einkommens-filternd sein (z.B. "Zurück in meinen alten Job ist halt alternativlos. Falsch. Du hast Optionen, die du dir noch nicht zugestanden hast.")
+- Die anderen Hooks (ohne expliziten Filter) bleiben szenisch-universell — die ziehen breit, die zg-spezifische Vertiefung passiert dann im Body.
+
+ABSOLUTE ANTI-FILTER — diese Botschaften DÜRFEN NIRGENDS auftauchen (weder Hook noch Body):
+❌ "Auch wenn du wenig Budget hast" / "Auch ohne Startkapital" / "Auch wenn du noch nichts hast"
+❌ "Du brauchst kein Geld" / "Es kostet dich nichts zu starten" (über den kostenlosen Workshop hinaus)
+❌ "Jede kann das, auch ohne Investition"
+❌ "Die arbeitslose Mutter, die ein Hobby sucht"
+❌ "Du musst nicht investieren"
+→ Begründung: Diese Sprache zieht eine Audience an, die nicht für die Ausbildung zahlen kann. Wir wollen Frauen mit Berufshintergrund / Cashflow / bereits getätigter Investition.
 
 GESCHRIEBEN NACH OGILVY-PRINZIPIEN (siehe System-Prompt):
 - Spezifik schlägt Vagheit (konkrete Zahlen, konkrete Namen, konkrete Bilder)
