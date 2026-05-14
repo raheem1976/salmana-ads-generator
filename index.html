@@ -1120,6 +1120,20 @@
     </div>
   </div>
 
+  <!-- SECTION 3b: Facebook-Targeting -->
+  <div class="section">
+    <div class="section-title">03b · Facebook-Targeting <span class="label-hint">(optional)</span></div>
+
+    <p style="font-size:13px; color:var(--mid); margin-bottom:14px; line-height:1.65;">
+      Welche Interessen, Lookalikes oder Custom Audiences werden in diesem Adset angesprochen? Die KI nutzt diese Info subtil als Bildwelt &amp; Sprache (nie plakativ wie &bdquo;Da du dich für X interessierst&hellip;&ldquo;).
+    </p>
+
+    <textarea id="fbTargeting" rows="4"
+      oninput="persistTextField('fbTargeting', 'salmana_fb_targeting')"
+      placeholder="Beispiel:&#10;Interessen: Brautstyling, Hochzeitsfrisuren, Wedding Planning Deutschland&#10;Lookalike: Workshop-Anmelderinnen 2025 (1%)&#10;Custom Audience: Page-Besucher letzte 90 Tage"></textarea>
+    <button type="button" class="clear-field-btn" id="fbTargetingClearBtn" onclick="clearPersistedTextField('fbTargeting', 'salmana_fb_targeting')" style="display:none;">Inhalt löschen</button>
+  </div>
+
   <!-- SECTION 4: Erfolgreiche Hooks -->
   <div class="section">
     <div class="section-title">04 · Erfolgreiche Hooks (Optional)</div>
@@ -2390,6 +2404,7 @@ async function generate() {
   const bodyStructure = getActiveChips('bodyStructureChips')[0] || 'Frei';
   const ctaCount = getActiveChips('ctaCountChips')[0] || '3';
   const zusatzInfos = getZusatzInfos();
+  const fbTargeting = (document.getElementById('fbTargeting')?.value || '').trim();
 
   if (hookTypes.length === 0) { showStatus('Wähle mindestens einen Hook-Typ.', 'error'); return; }
 
@@ -2407,7 +2422,7 @@ async function generate() {
   document.getElementById('ctaCards').innerHTML = '';
 
   // Build the user prompt
-  let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure, zusatzInfos });
+  let userPrompt = buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure, zusatzInfos, fbTargeting });
 
     try {
     const raw = await callWithActiveProvider(BRAND_SYSTEM_PROMPT, userPrompt);
@@ -2459,7 +2474,7 @@ async function callAnthropicWithRetry(apiKey, body, maxRetries = 3) {
   }
 }
 
-function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure, zusatzInfos }) {
+function buildPrompt({ desc, hookCount, hookTypes, placement, traffic, goal, zielgruppe, pastHooks, landingUrl, bodyCount, ctaCount, bodyStyles, bodyStructure, zusatzInfos, fbTargeting }) {
 
   // Determine cold/warm/retargeting split
   const isMix = traffic.startsWith('Mix');
@@ -2670,6 +2685,15 @@ ${hookInstruction}`;
 
   if (landingUrl) prompt += `\n\n## LANDINGPAGE-URL\nDie Ad leitet auf: ${landingUrl}`;
   if (fetchedPageContent) prompt += `\n\n## LANDINGPAGE-INHALT (automatisch ausgelesen – Primärquelle für Angebot, USPs, Daten)\n${fetchedPageContent.substring(0, 4000)}`;
+  if (fbTargeting) prompt += `\n\n## FACEBOOK-TARGETING (an wen die Ad ausgespielt wird)
+${fbTargeting}
+
+WICHTIG zur Targeting-Info:
+- Webe verwandte Bilder, Lebensszenen, Sprache und Alltagsmomente aus dieser Welt SUBTIL in Hooks und Bodies ein.
+- NIEMALS plakativ ansprechen — also NICHT "Da du dich für X interessierst…" / "Als Hochzeitsplaner-Fan…" / "Du folgst Yoga-Influencern, also…".
+- Cold-Hook-Regel bleibt unangetastet: kein PMU-Begriff im Cold-Hook trotz Targeting.
+- Das Targeting bestimmt, IN WELCHER WELT die Szene spielt — nicht ob PMU explizit genannt wird.
+- Wenn mehrere Interessen/Audiences angegeben sind: mische sie über die Hooks hinweg.`;
   if (pastHooks) prompt += `\n\n## ERFOLGREICHE HOOKS AUS DER VERGANGENHEIT\nDiese Hooks haben gut performt – lerne daraus, schreibe ähnlich starke, aber NEUE Varianten:\n${pastHooks}`;
 
   prompt += `
@@ -2981,6 +3005,7 @@ window.addEventListener('load', () => {
   renderKnowledgeBase();
   restorePersistedTextField('pastHooks', 'salmana_past_hooks');
   restorePersistedTextField('zusatzInfos', 'salmana_zusatz_infos');
+  restorePersistedTextField('fbTargeting', 'salmana_fb_targeting');
   const hasClaude = !!localStorage.getItem('salmana_api_key');
   const hasOpenAI = !!localStorage.getItem('salmana_openai_key');
   if (!hasClaude && !hasOpenAI) {
@@ -3241,7 +3266,8 @@ async function generateCaption() {
   document.getElementById('captionCards').innerHTML = '';
 
   const zusatzInfos = getZusatzInfos();
-  const prompt = buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url, zusatzInfos });
+  const fbTargeting = (document.getElementById('fbTargeting')?.value || '').trim();
+  const prompt = buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url, zusatzInfos, fbTargeting });
 
     try {
     const raw = await callWithActiveProvider(CAPTION_SYSTEM_PROMPT, prompt);
@@ -3260,7 +3286,7 @@ async function generateCaption() {
   }
 }
 
-function buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url, zusatzInfos }) {
+function buildCaptionPrompt({ thema, zielgruppe, typen, traffic, anzahl, hashtags, url, zusatzInfos, fbTargeting }) {
   const isRetargeting = traffic === 'retargeting';
 
   let trafficInstruction = isRetargeting
@@ -3342,7 +3368,7 @@ TYP: [z.B. "Empowerment"]
 TEXT:
 [Die fertige Caption – formatiert mit Absätzen und Emojis]
 CAPTION_END
-${zusatzInfos ? `\n## ZUSÄTZLICHE EINWÄNDE & INSIGHTS\nNutze diese realen Einwände und Probleme gezielt in den Captions. Wenn eine Zielgruppe genannt ist, wende den Punkt nur für diese an – sonst allgemein:\n${zusatzInfos}` : ''}`;
+${fbTargeting ? `\n## FACEBOOK-TARGETING (an wen die Caption/Ad ausgespielt wird)\n${fbTargeting}\n\nWICHTIG: Webe verwandte Bilder, Lebensszenen und Sprache aus dieser Welt SUBTIL in die Caption ein. NIE plakativ ansprechen ("Da du dich für X interessierst…"). Das Targeting bestimmt die Bildwelt, nicht die Direktansprache.` : ''}${zusatzInfos ? `\n## ZUSÄTZLICHE EINWÄNDE & INSIGHTS\nNutze diese realen Einwände und Probleme gezielt in den Captions. Wenn eine Zielgruppe genannt ist, wende den Punkt nur für diese an – sonst allgemein:\n${zusatzInfos}` : ''}`;
 
   return prompt;
 }
