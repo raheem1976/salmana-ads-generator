@@ -828,6 +828,23 @@
     font-style: italic;
   }
 
+  /* BUTTON ROW (kopieren + herunterladen nebeneinander) */
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .copy-all-btn.secondary {
+    background: transparent;
+    color: var(--mid);
+    border: 1px solid var(--border);
+  }
+  .copy-all-btn.secondary:hover {
+    background: var(--cream);
+    color: var(--dark);
+    border-color: var(--mid);
+  }
+
   /* CLEAR FIELD BUTTON (für persistierte Textareas) */
   .clear-field-btn {
     background: transparent;
@@ -1248,7 +1265,10 @@
 
     <div class="output-header">
       <h2>Generierte Hooks & Ads</h2>
-      <button class="copy-all-btn" onclick="copyAll()">Alle kopieren</button>
+      <div class="btn-row">
+        <button class="copy-all-btn" onclick="copyAll()">Alle kopieren</button>
+        <button class="copy-all-btn secondary" onclick="downloadAllAds()">Alles als Doc</button>
+      </div>
     </div>
 
     <div id="loadingSkeleton" style="display:none;">
@@ -1259,7 +1279,12 @@
 
     <!-- HOOKS SECTION -->
     <div id="hooksSection">
-      <h3 class="output-section-title">Hooks</h3>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; gap:10px; flex-wrap:wrap;">
+        <h3 class="output-section-title">Hooks</h3>
+        <div class="btn-row">
+          <button class="copy-all-btn secondary" onclick="downloadHooks()">Als Doc herunterladen</button>
+        </div>
+      </div>
       <p class="output-section-hint">Klick auf einen Hook-Text, um ihn zu kopieren. Farbcode: hellblau = Cold · gelb = Warm · rot = Retargeting</p>
       <div class="hooks-grid" id="hooksGrid"></div>
     </div>
@@ -1268,9 +1293,12 @@
 
     <!-- BODY TEXTS SECTION -->
     <div id="bodySection" style="display:none; margin-bottom:32px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; gap:10px; flex-wrap:wrap;">
         <h3 class="output-section-title">Body-Texte</h3>
-        <button class="copy-all-btn" onclick="copySection('bodyCards')">Alle Bodies kopieren</button>
+        <div class="btn-row">
+          <button class="copy-all-btn" onclick="copySection('bodyCards')">Alle kopieren</button>
+          <button class="copy-all-btn secondary" onclick="downloadBodies()">Als Doc herunterladen</button>
+        </div>
       </div>
       <p class="output-section-hint">Der Haupttext der Ad – jeder Body passt direkt zu seinem Hook (Body 1 → Hook 1 usw.).</p>
       <div id="bodyCards"></div>
@@ -1280,9 +1308,12 @@
 
     <!-- CTA SECTION -->
     <div id="ctaSection" style="display:none; margin-bottom:32px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; gap:10px; flex-wrap:wrap;">
         <h3 class="output-section-title">Call to Actions</h3>
-        <button class="copy-all-btn" onclick="copySection('ctaCards')">Alle CTAs kopieren</button>
+        <div class="btn-row">
+          <button class="copy-all-btn" onclick="copySection('ctaCards')">Alle kopieren</button>
+          <button class="copy-all-btn secondary" onclick="downloadCtas()">Als Doc herunterladen</button>
+        </div>
       </div>
       <p class="output-section-hint">Die letzte Zeile – kombiniere sie frei mit Hook + Body.</p>
       <div id="ctaCards"></div>
@@ -1379,7 +1410,10 @@
     <hr class="divider" />
     <div class="output-header">
       <h2>Deine Captions</h2>
-      <button class="copy-all-btn" onclick="copyAllCaptions()">Alle kopieren</button>
+      <div class="btn-row">
+        <button class="copy-all-btn" onclick="copyAllCaptions()">Alle kopieren</button>
+        <button class="copy-all-btn secondary" onclick="downloadCaptions()">Als Doc herunterladen</button>
+      </div>
     </div>
     <div id="captionLoadingSkeleton" style="display:none;">
       <div class="skeleton-block" style="height:180px;"></div>
@@ -3439,6 +3473,168 @@ function setCaptionLoading(state) {
     spinner.style.display = 'none';
     text.textContent = 'Captions generieren';
   }
+}
+
+// ─────────────────────────────────────────────
+//  DOWNLOAD AS .DOC (Word / Google Docs kompatibel)
+// ─────────────────────────────────────────────
+function downloadAsDoc(htmlBody, filename) {
+  const html = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>${escHtml(filename)}</title>
+<style>
+  body { font-family: Calibri, 'Segoe UI', Arial, sans-serif; padding: 50px 60px; color: #1a1a1a; line-height: 1.55; }
+  h1 { font-size: 26pt; color: #1a1a1a; border-bottom: 2pt solid #C9A84C; padding-bottom: 10pt; margin: 0 0 8pt; font-weight: 700; }
+  .meta { color: #888; font-size: 10pt; margin-bottom: 36pt; font-style: italic; }
+  h2 { font-size: 11pt; color: #9A7A32; margin: 28pt 0 8pt; text-transform: uppercase; letter-spacing: 2pt; font-weight: 600; }
+  .hook-text { font-size: 17pt; line-height: 1.55; color: #1a1a1a; margin: 0 0 6pt; font-weight: 500; }
+  .body-text { font-size: 13pt; line-height: 1.75; color: #1a1a1a; white-space: pre-wrap; margin: 0; }
+  .cta-text { font-size: 15pt; font-weight: 600; color: #1a1a1a; margin: 0 0 6pt; }
+  .label { color: #888; font-size: 9.5pt; letter-spacing: 0.8pt; text-transform: uppercase; margin: 4pt 0 0; }
+  hr { border: none; border-top: 1pt solid #ddd; margin: 22pt 0; }
+  .section-header { font-size: 18pt; color: #1a1a1a; margin: 50pt 0 12pt; padding-bottom: 6pt; border-bottom: 1pt solid #C9A84C; font-weight: 700; }
+  .section-header:first-of-type { margin-top: 24pt; }
+</style>
+</head>
+<body>
+${htmlBody}
+</body>
+</html>`;
+  const blob = new Blob(['﻿' + html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename + '.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function nowStamp() {
+  return new Date().toISOString().slice(0, 10);
+}
+function nowReadable() {
+  return new Date().toLocaleString('de-DE', { dateStyle: 'long', timeStyle: 'short' });
+}
+
+function buildHooksHtml() {
+  const cards = document.querySelectorAll('#hooksGrid .hook-card');
+  if (!cards.length) return null;
+  let html = '';
+  cards.forEach((card, i) => {
+    const number = card.querySelector('.hook-number')?.textContent.trim() || `Hook ${i + 1}`;
+    const text = card.querySelector('.hook-text')?.textContent.trim() || '';
+    const type = card.querySelector('.hook-type')?.textContent.trim() || '';
+    const temp = card.querySelector('.hook-temp')?.textContent.trim() || '';
+    const label = [type, temp].filter(Boolean).join(' · ');
+    html += `<h2>${escHtml(number)}</h2>
+<p class="hook-text">${escHtml(text)}</p>
+${label ? `<p class="label">${escHtml(label)}</p>` : ''}`;
+    if (i < cards.length - 1) html += '<hr/>';
+  });
+  return { html, count: cards.length };
+}
+
+function buildBodiesHtml() {
+  const cards = document.querySelectorAll('#bodyCards .ad-card');
+  if (!cards.length) return null;
+  let html = '';
+  cards.forEach((card, i) => {
+    const title = card.querySelector('.ad-card-title')?.textContent.trim() || `Body ${i + 1}`;
+    const tag = card.querySelector('.ad-framework-tag')?.textContent.trim() || '';
+    const text = card.querySelector('.ad-content')?.textContent.trim() || '';
+    html += `<h2>${escHtml(title)}</h2>
+${tag ? `<p class="label">${escHtml(tag)}</p>` : ''}
+<p class="body-text">${escHtml(text)}</p>`;
+    if (i < cards.length - 1) html += '<hr/>';
+  });
+  return { html, count: cards.length };
+}
+
+function buildCtasHtml() {
+  const cards = document.querySelectorAll('#ctaCards .ad-card');
+  if (!cards.length) return null;
+  let html = '';
+  cards.forEach((card, i) => {
+    const title = card.querySelector('.ad-card-title')?.textContent.trim() || `CTA ${i + 1}`;
+    const tag = card.querySelector('.ad-framework-tag')?.textContent.trim() || '';
+    const text = card.querySelector('.ad-content')?.textContent.trim() || '';
+    html += `<h2>${escHtml(title)}</h2>
+<p class="cta-text">${escHtml(text)}</p>
+${tag ? `<p class="label">${escHtml(tag)}</p>` : ''}`;
+    if (i < cards.length - 1) html += '<hr/>';
+  });
+  return { html, count: cards.length };
+}
+
+function buildCaptionsHtml() {
+  const cards = document.querySelectorAll('#captionCards .caption-card');
+  if (!cards.length) return null;
+  let html = '';
+  cards.forEach((card, i) => {
+    const title = card.querySelector('.caption-card-title')?.textContent.trim() || `Caption ${i + 1}`;
+    const tags = [...card.querySelectorAll('.caption-tag')].map(t => t.textContent.trim()).filter(Boolean).join(' · ');
+    const text = card.querySelector('.caption-text')?.textContent.trim() || '';
+    html += `<h2>${escHtml(title)}</h2>
+${tags ? `<p class="label">${escHtml(tags)}</p>` : ''}
+<p class="body-text">${escHtml(text)}</p>`;
+    if (i < cards.length - 1) html += '<hr/>';
+  });
+  return { html, count: cards.length };
+}
+
+function downloadHooks() {
+  const data = buildHooksHtml();
+  if (!data) { showStatus('Keine Hooks zum Herunterladen.', 'error'); setTimeout(hideStatus, 3000); return; }
+  const html = `<h1>Hooks — Salmana Beauty Academy</h1>
+<p class="meta">${data.count} Hooks · Generiert am ${escHtml(nowReadable())}</p>
+${data.html}`;
+  downloadAsDoc(html, `Salmana-Hooks-${nowStamp()}`);
+}
+
+function downloadBodies() {
+  const data = buildBodiesHtml();
+  if (!data) { showStatus('Keine Bodies zum Herunterladen.', 'error'); setTimeout(hideStatus, 3000); return; }
+  const html = `<h1>Body-Texte — Salmana Beauty Academy</h1>
+<p class="meta">${data.count} Bodies · Generiert am ${escHtml(nowReadable())}</p>
+${data.html}`;
+  downloadAsDoc(html, `Salmana-Bodies-${nowStamp()}`);
+}
+
+function downloadCtas() {
+  const data = buildCtasHtml();
+  if (!data) { showStatus('Keine CTAs zum Herunterladen.', 'error'); setTimeout(hideStatus, 3000); return; }
+  const html = `<h1>Call to Actions — Salmana Beauty Academy</h1>
+<p class="meta">${data.count} CTAs · Generiert am ${escHtml(nowReadable())}</p>
+${data.html}`;
+  downloadAsDoc(html, `Salmana-CTAs-${nowStamp()}`);
+}
+
+function downloadCaptions() {
+  const data = buildCaptionsHtml();
+  if (!data) { showStatus('Keine Captions zum Herunterladen.', 'error'); setTimeout(hideStatus, 3000); return; }
+  const html = `<h1>Captions — Salmana Beauty Academy</h1>
+<p class="meta">${data.count} Captions · Generiert am ${escHtml(nowReadable())}</p>
+${data.html}`;
+  downloadAsDoc(html, `Salmana-Captions-${nowStamp()}`);
+}
+
+function downloadAllAds() {
+  const hooks = buildHooksHtml();
+  const bodies = buildBodiesHtml();
+  const ctas = buildCtasHtml();
+  if (!hooks && !bodies && !ctas) {
+    showStatus('Noch nichts generiert.', 'error'); setTimeout(hideStatus, 3000); return;
+  }
+  const parts = [`<p class="meta">Generiert am ${escHtml(nowReadable())}</p>`];
+  if (hooks) parts.push(`<h2 class="section-header">${hooks.count} Hooks</h2>${hooks.html}`);
+  if (bodies) parts.push(`<h2 class="section-header">${bodies.count} Body-Texte</h2>${bodies.html}`);
+  if (ctas) parts.push(`<h2 class="section-header">${ctas.count} Call to Actions</h2>${ctas.html}`);
+  const html = `<h1>Facebook-Ads — Salmana Beauty Academy</h1>${parts.join('')}`;
+  downloadAsDoc(html, `Salmana-Ads-${nowStamp()}`);
 }
 </script>
 </body>
