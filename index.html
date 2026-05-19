@@ -1446,14 +1446,15 @@
   <div class="section">
     <div class="section-title">07 · Caption-Typ &amp; Format</div>
 
-    <label><strong>Was soll die Caption bewirken?</strong> <span class="label-hint">(mehrere wählbar)</span></label>
+    <label><strong>Framework</strong> <span class="label-hint">(eine wählen — bestimmt den Aufbau der Caption)</span></label>
     <div class="chip-group" id="captionTypChips">
-      <div class="chip active" data-val="Mut-Macher – emotional, teilen-würdig, baut Beziehung & Vertrauen auf, KEIN harter Verkaufs-CTA (max. weicher Einladungs-Schluss)">Mut-Macher</div>
-      <div class="chip" data-val="Salmana persönlich – Salmas eigene Geschichte ODER Behind-the-Scenes / Tag im Studio, baut Identifikation und Nähe auf, Ich-Perspektive zwingend">Salmana persönlich</div>
-      <div class="chip" data-val="Workshop / Webinar bewerben – konkretes Event mit Datum, klarer Anmelde-CTA, P.S. mit Termin-Block ist PFLICHT (Format: 📅 Wochentag, Tag. Monat / 🕙 Uhrzeit)">Workshop bewerben</div>
-      <div class="chip" data-val="Absolventinnen-Story – eine konkrete Erfolgs-Story einer Absolventin als Caption-Hauptachse (Social Proof in Story-Form, mit konkretem Detail wie Vorname/Beruf-vorher/Zahl/Zeitraum)">Absolventinnen-Story</div>
-      <div class="chip" data-val="Wissen / Mythos-Buster – edukativ, klärt einen PMU- oder Branchen-Mythos auf (z.B. 'Crashkurs reicht nicht', 'Talent ist überschätzt'), baut Salmana-Expertise auf">Wissen / Mythos</div>
-      <div class="chip" data-val="Einwand auflösen – adressiert einen konkreten Kunden-Zweifel direkt (Talent, Geld, Zeit, 'mein Mann sagt…', 'ich bin zu alt'), zeigt empathisch wie Salmana ihn entkräftet">Einwand auflösen</div>
+      <div class="chip active" data-val="PAS">PAS</div>
+      <div class="chip" data-val="AIDA">AIDA</div>
+      <div class="chip" data-val="Storytelling → Angebot">Storytelling → Angebot</div>
+      <div class="chip" data-val="Rational">Rational</div>
+    </div>
+    <div class="info-box" style="font-size:11.5px; line-height:1.7;">
+      <strong>PAS</strong>: Problem → Agitate → Solution &nbsp;|&nbsp; <strong>AIDA</strong>: Interest → Desire → Action &nbsp;|&nbsp; <strong>Storytelling → Angebot</strong>: persönliche/Absolventinnen-Geschichte mit Wendepunkt, dann konkretes Angebot &nbsp;|&nbsp; <strong>Rational</strong>: 3 Reason-Why-Argumente mit „weil…"-Belegen
     </div>
 
     <div class="row-2" style="margin-top:14px;">
@@ -3303,7 +3304,7 @@ window.addEventListener('load', () => {
  'captionCountChips', 'captionHashtagChips', 'captionTrafficChips'].forEach(id => {
   const grp = document.getElementById(id);
   if (!grp) return;
-  const multi = ['captionTypChips'].includes(id);
+  const multi = false; // alle Caption-Chip-Gruppen sind jetzt Single-Select
   grp.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       if (multi) {
@@ -3638,8 +3639,53 @@ Jede Frau soll sich in mindestens einer Caption direkt wiedererkennen.`
   return zgMap[zielgruppe] || `ZIELGRUPPE: ${zielgruppe}`;
 })()}
 
-## CAPTION-TYP(EN)
-${typen.join(', ')}
+## CAPTION-FRAMEWORK (PFLICHT — strikt einhalten)
+Du schreibst JEDE der ${anzahl} Captions nach folgendem Framework:
+
+**${typen.join(', ')}**
+
+${(() => {
+  const fw = typen[0] || 'PAS';
+  const frameworks = {
+    'PAS': `**PAS-AUFBAU — Pflicht, jede Phase muss klar erkennbar sein:**
+
+▸ PROBLEM (50–80 Wörter): Beginne mit dem konkreten Schmerz der Zielgruppe. Du-Ansprache. KEINE abstrakte Aussage — eine echte Szene oder ein konkreter Gedanke, den die Leserin kennt. Konkrete Berufe/Alltagsmomente, die zur Zielgruppe passen. Niemals "viele Frauen fühlen sich…" — sondern "Du arbeitest seit 8 Jahren als MFA und…".
+
+▸ AGITATE (70–110 Wörter): Verstärke den Schmerz. Was kostet das Nicht-Handeln in 1 Jahr / 5 Jahren? Konkrete Konsequenz. Zeit-Brutalität ohne Drama. Reason-Why-Twist am Ende: erkläre den MECHANISMUS, nicht nur die Symptome (z.B. "Der Job nimmt dir genau die Energie, die du für die Veränderung brauchst — das ist die Falle"). Eine klare polarisierende Klammer schließt die Phase.
+
+▸ SOLUTION (90–130 Wörter): Salmas Ich-Perspektive ("Vor 13 Jahren saß ich genau da…"). Konkreter Beweis: "Über 400 Frauen ausgebildet", konkrete Absolventinnen-Stimme mit Detail. Dann konkretes Angebot (Workshop/Webinar/Ausbildung) mit Datum + Uhrzeit + Format. Dann KONKRETER nächster Schritt mit Anker ("Trag dich auf der Seite ein. Ich seh dich am [Datum] um [Uhrzeit].") — NICHT "Du verlierst nichts" oder vage Floskeln.`,
+
+    'AIDA': `**AIDA-AUFBAU — Pflicht, jede Phase muss klar erkennbar sein:**
+
+▸ INTEREST (50–80 Wörter): Beginne mit dem aktuellen Problem/Schmerz der Leserin, NICHT mit Wunschleben. Stelle 1–2 Fragen, die sie innerlich mit "Ja, genau so ist das!" beantwortet. Konkrete Berufs- oder Lebenssituations-Bezüge.
+
+▸ DESIRE (90–130 Wörter): Male das NEUE LEBEN — filmisch, konkret, sinnlich. Nicht "ein besseres Leben" sondern konkrete Bilder (eigenes Studio, eigene Kundinnen, eigener Rhythmus). Dann zeige den KONKRETEN WEG: was bekommt sie in der Ausbildung/im Workshop? Mindestens EIN konkretes Absolventinnen-Beispiel mit Zahl/Zeitraum ("Eine hat 3 Monate nach der Ausbildung ihr erstes Studio eröffnet"). Konkrete Workshop-Daten (Datum + Uhrzeit).
+
+▸ ACTION (40–70 Wörter): Sanfte aber konkrete Dringlichkeit. Konkreter nächster Schritt mit Datum-Anker ("Ich seh dich am [Datum] um [Uhrzeit]"). Pre-CTA mit Konsequenz-Andeutung erlaubt ("Wenn du heute nicht klickst, denkst du in einem Jahr noch denselben Gedanken"). Niemals "Du verlierst nichts" — immer konkrete Aktion.`,
+
+    'Storytelling → Angebot': `**STORYTELLING → ANGEBOT — Pflicht, klare zwei-Phasen-Struktur:**
+
+▸ STORY (120–180 Wörter): Erzähle eine ECHTE persönliche Geschichte mit klarem Wendepunkt. Zwei Optionen:
+  (a) Salmas eigene Geschichte (Ich-Perspektive): "Vor 13 Jahren saß ich in meinem Wohnzimmer mit einer Nadel in der Hand und…"
+  (b) Eine konkrete Absolventinnen-Story: "Sandra. 34. Drei Jahre als Erzieherin, dann Elternzeit. Letzten Monat hat sie mir geschrieben: '…'"
+Die Story braucht: VORHER-Zustand + Moment der Entscheidung + Wendepunkt + NACHHER-Realität. Konkrete Details, nicht nur Gefühle. Mindestens eine konkrete Zahl/Zeit-Angabe.
+
+▸ ANGEBOT (60–100 Wörter): Natürlicher Übergang ("Genau deshalb mache ich am [Datum]…"). KEIN harter Schnitt. Was bekommt sie konkret? Workshop-Inhalte kurz benennen. Konkreter nächster Schritt mit Datum-Anker am Ende ("Ich seh dich am 30. Mai um 10").`,
+
+    'Rational': `**RATIONAL — Pflicht, drei Reason-Why-Argumente mit konkretem Beleg:**
+
+▸ EINSTIEG (30–50 Wörter): Eine konkrete Behauptung oder eine direkte Frage, die zur Argumentation überleitet. NICHT erst lange emotional aufbauen — Rational geht direkt.
+
+▸ ARGUMENT 1 (50–70 Wörter): Behauptung + "weil…" + konkreter Beleg (Zahl, Beispiel, Absolventin). Format: "X funktioniert für Y — weil Z."
+
+▸ ARGUMENT 2 (50–70 Wörter): Anderer Aspekt. Wieder "weil…" + Beleg. Niemals zwei Mal dieselbe Begründung.
+
+▸ ARGUMENT 3 (50–70 Wörter): Dritter Aspekt. "weil…" + Beleg.
+
+▸ KONKRETER ABSCHLUSS (40–60 Wörter): Was als nächstes? Konkreter Workshop-/Angebots-Anker mit Datum + Uhrzeit. Klarer CTA-Satz am Ende. Niemals philosophische Reflexion am Schluss — Rational endet mit konkreter Handlungs-Aufforderung.`
+  };
+  return frameworks[fw] || frameworks['PAS'];
+})()}
 
 ## TRAFFIC
 ${trafficInstruction}
@@ -3664,9 +3710,9 @@ ${hashtags ? '- Am Ende: 10–15 Hashtags (Deutsch + Englisch, auf neuer Zeile n
 CAPTION_START
 NUMMER: [Zahl]
 ZIELGRUPPE: [kurz, z.B. "Mamas & Elternzeit"]
-TYP: [z.B. "Empowerment"]
+TYP: ${typen[0] || 'PAS'}
 TEXT:
-[Die fertige Caption – formatiert mit Absätzen und Emojis]
+[Die fertige Caption – formatiert mit Absätzen und Emojis, alle Framework-Phasen klar erkennbar]
 CAPTION_END
 ${fbTargeting ? `\n## FACEBOOK-TARGETING (an wen die Caption/Ad ausgespielt wird)\n${fbTargeting}\n\nWICHTIG: Webe verwandte Bilder, Lebensszenen und Sprache aus dieser Welt SUBTIL in die Caption ein. NIE plakativ ansprechen ("Da du dich für X interessierst…"). Das Targeting bestimmt die Bildwelt, nicht die Direktansprache.` : ''}${zusatzInfos ? `\n## ZUSÄTZLICHE EINWÄNDE & INSIGHTS\nNutze diese realen Einwände und Probleme gezielt in den Captions. Wenn eine Zielgruppe genannt ist, wende den Punkt nur für diese an – sonst allgemein:\n${zusatzInfos}` : ''}`;
 
